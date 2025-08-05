@@ -12,12 +12,13 @@ import frc.robot.subsystems.Elevador;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class elevadancia extends Command {
 
-  PS4Controller controle = new PS4Controller(0);
+  PS4Controller controle;
   Elevador elevador;
 
   /** Creates a new elevadancia. */
-  public elevadancia(Elevador elevador) {
+  public elevadancia(Elevador elevador, PS4Controller controle) {
     this.elevador = elevador;
+    this.controle = controle;
   }
 
   // Called when the command is initially scheduled.
