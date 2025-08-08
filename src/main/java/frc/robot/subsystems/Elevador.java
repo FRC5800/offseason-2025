@@ -13,6 +13,7 @@ public class Elevador extends SubsystemBase {
     WPI_TalonSRX elevadorMotorLead = new WPI_TalonSRX(LEAD_ID);
     WPI_TalonSRX elevadorMotorFollower = new WPI_TalonSRX(FOLLOWER_ID);
 
+    //pid ta sem uso ainda mas ja fiz variaveis de posição inicial e final, as constantes eu peguei do codigo do climber da ultima seazon
     public PIDController pidControllerElevador = new PIDController(0.015, 0.01, 0.005);
 
     public Elevador() {
