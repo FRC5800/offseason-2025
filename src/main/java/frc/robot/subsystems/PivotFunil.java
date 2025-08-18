@@ -29,5 +29,7 @@ public class PivotFunil extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void abrirFunil()
+  public void abrirFunil(double controlePos) {
+    pivotMotor.set(controlePos * 0.5);
+  }
 }

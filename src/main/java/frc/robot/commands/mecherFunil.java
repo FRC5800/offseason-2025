@@ -4,13 +4,21 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.subsystems.PivotFunil;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class mecherFunil extends Command {
+
+  PS4Controller controle;
+  PivotFunil pivotFunil;
+
   /** Creates a new mecherFunil. */
-  public mecherFunil() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public mecherFunil(PivotFunil pivotFunil, PS4Controller controle) {
+    this.controle = controle;
+    this.pivotFunil = pivotFunil;
   }
 
   // Called when the command is initially scheduled.
@@ -19,7 +27,13 @@ public class mecherFunil extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if(Math.abs(controle.getLeftY()) > Constants.ZONA_MORTA_CONTROLE) {
+      pivotFunil.abrirFunil(controle.getLeftY());
+    } else {
+      pivotFunil.abrirFunil(0.0);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
