@@ -7,11 +7,12 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.elevadancia;
+import frc.robot.commands.Elevadancia;
 import frc.robot.subsystems.Elevador;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -22,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
   PS4Controller controle = new PS4Controller(0);
   Elevador elevador = new Elevador();
 
@@ -57,8 +57,7 @@ public class RobotContainer {
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    elevador.setDefaultCommand(new elevadancia(elevador, controle));
-
+    elevador.setDefaultCommand(new Elevadancia(elevador, controle));
   }
 
   /**
