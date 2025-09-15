@@ -7,7 +7,8 @@ package frc.robot;
 import frc.robot.subsystems.XDrive;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.elevadancia;
+import frc.robot.commands.Elevadancia;
+import frc.robot.commands.Elevadancia;
 import frc.robot.subsystems.Elevador;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,7 +21,6 @@ import frc.robot.commands.ClimberComm;
 import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -44,7 +44,7 @@ public class RobotContainer {
   private void configureBindings() {
     xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
     climber.setDefaultCommand(new ClimberComm(climber, controller));
-    elevador.setDefaultCommand(new elevadancia(elevador, controller));
+    elevador.setDefaultCommand(new Elevadancia(elevador, controller));
   }
 
   public Command getAutonomousCommand() {
