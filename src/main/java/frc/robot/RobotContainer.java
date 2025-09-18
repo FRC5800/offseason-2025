@@ -27,6 +27,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.MecherFunil;
+import frc.robot.subsystems.PivotFunil;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,7 +44,9 @@ public class RobotContainer {
   private Joystick controller = new Joystick(0);
   private Climber climber = new Climber();
   private Elevador elevador = new Elevador();
+  private PivotFunil pivotFunil = new PivotFunil();
 
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
@@ -49,6 +56,8 @@ public class RobotContainer {
     xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
     climber.setDefaultCommand(new ClimberComm(climber, controller));
     elevador.setDefaultCommand(new Elevadancia(elevador, controller));
+    new JoystickButton(controller, 1).whileTrue(new MecherFunil(pivotFunil,1));
+    new JoystickButton(controller, 2).whileTrue(new MecherFunil(pivotFunil, -1));
   }
 
   public Command getAutonomousCommand() {
