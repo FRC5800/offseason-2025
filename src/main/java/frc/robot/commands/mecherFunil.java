@@ -4,21 +4,23 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.PivotFunil;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class mecherFunil extends Command {
-
-  PS4Controller controle;
-  PivotFunil pivotFunil;
+public class MecherFunil extends Command {
+  private PivotFunil pivotFunil;
+  private double speed;
 
   /** Creates a new mecherFunil. */
-  public mecherFunil(PivotFunil pivotFunil, PS4Controller controle) {
-    this.controle = controle;
+  public MecherFunil(PivotFunil pivotFunil, double speed) {
     this.pivotFunil = pivotFunil;
+    this.speed = speed;
+    addRequirements(pivotFunil);
   }
 
   // Called when the command is initially scheduled.
@@ -28,16 +30,16 @@ public class mecherFunil extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(controle.getLeftY()) > Constants.ZONA_MORTA_CONTROLE) {
-      pivotFunil.abrirFunil(controle.getLeftY());
-    } else {
-      pivotFunil.abrirFunil(0.0);
-    }
+    pivotFunil.run(speed);
+    SmartDashboard.putBoolean("Rodando", true);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    pivotFunil.run(0);
+    SmartDashboard.putBoolean("Rodando", false);
+  }
 
   // Returns true when the command should end.
   @Override
