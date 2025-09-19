@@ -14,8 +14,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -56,6 +61,17 @@ public class PivotFunil extends SubsystemBase {
     Units.degreesToRadians(OPEN_POS)
   );
     
+  // Pivot position
+  private Pose3d pivotPose;
+  private Pose3d basePose;
+
+  // Array publisher
+  private StructArrayPublisher<Pose3d> posePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Pivot position", Pose3d.struct).publish();
+  private StructArrayPublisher<Pose3d> basePosePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Base pivot position", Pose3d.struct).publish();
+
+  // temp publhiser
+  private StructArrayPublisher<Pose3d> tempPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("temp position", Pose3d.struct).publish();
+
   /** Creates a new PivotFunil. */
   public PivotFunil() {
     // Configuring controller
@@ -86,6 +102,18 @@ public class PivotFunil extends SubsystemBase {
 
     // Set the angle of the mechanism of the pivot
     pivot.setAngle(getAngle());
+
+    // temp pose
+    Pose3d tempPose = new Pose3d(new Translation3d(0, 0, 0.93980), new Rotation3d());
+
+    // Pivot pose
+    pivotPose = new Pose3d(new Translation3d(-0.33, 0, 0.81875), new Rotation3d(0, -Units.degreesToRadians(getAngle() + 35), 0));
+    basePose = new Pose3d(new Translation3d(), new Rotation3d());
+
+    // Update publishers
+    posePublisher.set(new Pose3d[]{ pivotPose });
+    basePosePublisher.set(new Pose3d[] { basePose });
+    tempPublisher.set(new Pose3d[]{ tempPose });
   }
 
   public void run(double speed) {
