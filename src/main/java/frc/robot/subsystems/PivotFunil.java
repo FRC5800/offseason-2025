@@ -39,7 +39,7 @@ public class PivotFunil extends SubsystemBase {
   private static final double PIVTO_MASS = 2.08691147;
 
   // Controllers
-  private SparkMax pivotMotor = new SparkMax(LEAD_ID, MotorType.kBrushless);
+  private SparkMax pivotMotor = new SparkMax(LEAD_ID, MotorType.kBrushed);
 
   // PID Controller (temporary constants)
   public PIDController pidControllerPivot = new PIDController(0.015, 0.01, 0.005);
@@ -77,7 +77,7 @@ public class PivotFunil extends SubsystemBase {
     // Configuring controller
     var pivotMotorConfig = new SparkMaxConfig();
     pivotMotorConfig.idleMode(IdleMode.kBrake);
-    pivotMotorConfig.smartCurrentLimit(60);
+    pivotMotorConfig.smartCurrentLimit(40);
     pivotMotor.configure(pivotMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
     // Append the pivot on the root
