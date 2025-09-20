@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.google.flatbuffers.Struct;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -15,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -76,6 +78,10 @@ public class Elevador extends SubsystemBase {
     private StructArrayPublisher<Pose3d> state2Publisher = NetworkTableInstance.getDefault().getStructArrayTopic("State 2", Pose3d.struct).publish();
     private StructArrayPublisher<Pose3d> state3Publisher = NetworkTableInstance.getDefault().getStructArrayTopic("State 3", Pose3d.struct).publish();
 
+    // Temp publishers
+    private StructArrayPublisher<Pose3d> tempPose01 = NetworkTableInstance.getDefault().getStructArrayTopic("Temp 01", Pose3d.struct).publish();
+    private StructArrayPublisher<Pose3d> tempPose02 = NetworkTableInstance.getDefault().getStructArrayTopic("Temp 02", Pose3d.struct).publish();
+
     public Elevador() {
         // Configure controllers
         var motorMasterConfig = new SparkMaxConfig(); // Creates a object of SparkMaxConfig
@@ -120,6 +126,12 @@ public class Elevador extends SubsystemBase {
         state1Publisher.set(new Pose3d[]{ state1Position });
         state2Publisher.set(new Pose3d[]{ state2Position });
         state3Publisher.set(new Pose3d[]{ state3Position });
+
+        // Temp pose
+        Pose3d pivotPose = new Pose3d(new Translation3d(0, 0, 0.81875), new Rotation3d(0, Units.degreesToRadians(35), 0));
+        Pose3d basePivot = new Pose3d();
+        tempPose01.set(new Pose3d[]{ basePivot });
+        tempPose02.set(new Pose3d[]{ pivotPose });
     }
 
     // Raise elevator method

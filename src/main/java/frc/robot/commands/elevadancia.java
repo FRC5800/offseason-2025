@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -11,11 +12,11 @@ import frc.robot.subsystems.Elevador;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Elevadancia extends Command {
-  PS4Controller controle;
+  Joystick controle;
   Elevador elevador;
 
   /** Creates a new elevadancia. */
-  public Elevadancia(Elevador elevador, PS4Controller controle) {
+  public Elevadancia(Elevador elevador, Joystick controle) {
     this.elevador = elevador;
     this.controle = controle;
     addRequirements(elevador);
@@ -30,8 +31,8 @@ public class Elevadancia extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(controle.getLeftY()) > Constants.ZONA_MORTA_CONTROLE) {
-      elevador.levantagem(-controle.getLeftY());
+    if(Math.abs(controle.getY()) > Constants.ZONA_MORTA_CONTROLE) {
+      elevador.levantagem(-controle.getZ());
     } else {
       elevador.levantagem(0.0);
     }
