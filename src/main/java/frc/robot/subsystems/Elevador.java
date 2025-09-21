@@ -128,7 +128,7 @@ public class Elevador extends SubsystemBase {
         state3Publisher.set(new Pose3d[]{ state3Position });
 
         // Temp pose
-        Pose3d pivotPose = new Pose3d(new Translation3d(0, 0, 0.81875), new Rotation3d(0, Units.degreesToRadians(35), 0));
+        Pose3d pivotPose = new Pose3d(new Translation3d(-0.33, 0, 0.81875), new Rotation3d(0, Units.degreesToRadians(0), 0));
         Pose3d basePivot = new Pose3d();
         tempPose01.set(new Pose3d[]{ basePivot });
         tempPose02.set(new Pose3d[]{ pivotPose });
