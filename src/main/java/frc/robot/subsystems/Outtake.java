@@ -10,66 +10,39 @@ import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-//Criando a classe do outtake
+/*Criando a classe do outtake */
 public class Outtake extends SubsystemBase {
+  /*Variáveis */
 
-  final SparkFlex rodinhas; //motor das rodas do outtake
+  //motor das rodas do outtake
+  final SparkMax rodinhas; 
 
-  //váriavel do sensor ultrassônico que vem do input do robo rio
+  //sensor ultrassônico que vem do input do roborio
   DigitalInput ultraSonicInput = new DigitalInput(1);
 
-  public Outtake () {
+  /*Construtor do outtake com config do motor*/
+    public Outtake () {
     
-    rodinhas = new SparkFlex(0, MotorType.kBrushless);
+      rodinhas = new SparkMax(0, MotorType.kBrushless);  
+       var rodinhasConfig = new SparkMaxConfig();
+       rodinhasConfig.smartCurrentLimit(40);
+       rodinhas.configure(rodinhasConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+    }
 
-    var rodinhasConfig = new SparkFlexConfig();
-    rodinhasConfig.smartCurrentLimit(40);
-    rodinhas.configure(rodinhasConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-  }
-
-  public void setVelocity (double speed) {
-      rodinhas.set(0.6);
-  }
-
+  //resgata o input do sensor
   public boolean getUltraSonic(){
     return ultraSonicInput.get();
   }
-  /**
-   * Example command factory method.
-   *
-   * @return a command 
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
-  }
-
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
-  }
-
+  
   @Override
   public void periodic() {
-        SmartDashboard.putBoolean("digitalInput", getUltraSonic());
+        SmartDashboard.putBoolean("UltraSonicInput", getUltraSonic()); //mostra o input do sensor na dashboard
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
 }
