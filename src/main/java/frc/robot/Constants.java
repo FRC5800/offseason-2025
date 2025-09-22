@@ -17,8 +17,8 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class ElevadorConstants {
-    public static final double EV_POS_INICIAL = 0.0;
-    public static final double EV_POS_FINAL = 0.0;
+    public static final double EV_POS_INICIAL = 0.940;
+    public static final double EV_POS_FINAL = 1.7;
   }
   public static final double ZONA_MORTA_CONTROLE = 0.01;
 }

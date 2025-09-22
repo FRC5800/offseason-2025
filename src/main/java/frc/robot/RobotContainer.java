@@ -8,7 +8,9 @@ import frc.robot.commands.Elevadancia;
 import frc.robot.subsystems.Elevador;
 import frc.robot.subsystems.temp_subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer {
   Joystick controle = new Joystick(0);
   Elevador elevador = new Elevador();
+  PS4Controller controleBotoes = new PS4Controller(0);
   
   //temp
   DriveTrain driveTrain = new DriveTrain();
@@ -30,7 +33,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    elevador.setDefaultCommand(new Elevadancia(elevador, controle));
+    elevador.setDefaultCommand(new Elevadancia(elevador, controle, controleBotoes));
   }
 
   public Command getAutonomousCommand() {

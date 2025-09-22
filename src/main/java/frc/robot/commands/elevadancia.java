@@ -14,11 +14,13 @@ import frc.robot.subsystems.Elevador;
 public class Elevadancia extends Command {
   Joystick controle;
   Elevador elevador;
+  PS4Controller controleBotoes;
 
   /** Creates a new elevadancia. */
-  public Elevadancia(Elevador elevador, Joystick controle) {
+  public Elevadancia(Elevador elevador, Joystick controle, PS4Controller controleBotoes) {
     this.elevador = elevador;
     this.controle = controle;
+    this.controleBotoes = controleBotoes;
     addRequirements(elevador);
   }
 
@@ -35,6 +37,13 @@ public class Elevadancia extends Command {
       elevador.levantagem(-controle.getZ());
     } else {
       elevador.levantagem(0.0);
+    }
+
+    if(controleBotoes.getTriangleButton()) {
+      elevador.elevatorGotoTop();
+    }
+    if(controleBotoes.getCrossButton()) {
+      elevador.elevatorGotoBottom();
     }
   }
 
