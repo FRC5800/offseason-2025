@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ElevadorConstants;
 
 public class Elevador extends SubsystemBase {
     // Elevator constants
@@ -50,8 +51,7 @@ public class Elevador extends SubsystemBase {
     private RelativeEncoder slaveEncoder;
 
     // Controllers (temporary constants)
-    public PIDController pidControllerElevador = new PIDController(0.015, 0.01, 0.005);
-
+    public PIDController pidControllerElevador = new PIDController(13, 2.5, 0.3);
     // Canva mechanism
     private Mechanism2d elevatorMech = new Mechanism2d(3, 3);
     private MechanismRoot2d elevatorRoot = elevatorMech.getRoot("Elevator root", 1.5, 0);
@@ -137,6 +137,16 @@ public class Elevador extends SubsystemBase {
     // Raise elevator method
     public void levantagem(double controlePos) {
         elevatorMaster.set(controlePos * 0.5);
+    }
+
+    // set elevator position to top with PID
+    public void elevatorGotoTop() {
+        elevatorMaster.set(pidControllerElevador.calculate(getHeight(), ElevadorConstants.EV_POS_FINAL));
+    }
+
+    // set elevator position to bottom with PID
+    public void elevatorGotoBottom() {
+        elevatorMaster.set(pidControllerElevador.calculate(getHeight(), ElevadorConstants.EV_POS_INICIAL));
     }
 
     // Get the height of the elevator
