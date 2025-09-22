@@ -9,10 +9,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class MoveOuttake extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  //criando variáavel da classe outtake e velocidade
   private Outtake outtake;
   private double speed;
 
-
+  //construtor do comando 
   public MoveOuttake(Outtake outtake, double speed) {
     this.outtake = outtake;
      this.speed = speed;
@@ -24,6 +25,7 @@ public class MoveOuttake extends Command {
 
   @Override
   public void execute() {
+  //atribuindo o método que define a velocidade
    outtake.setVelocity(speed);
   }
 
