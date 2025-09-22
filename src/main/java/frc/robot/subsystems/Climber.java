@@ -33,6 +33,6 @@ public class Climber extends SubsystemBase {
 
   //metodo pra colocar/setar a velocidade dele
   public void run(double speed) {
-    climberMotor.set(1);
+    climberMotor.set(speed);
   }
 }
