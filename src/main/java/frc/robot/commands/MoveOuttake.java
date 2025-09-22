@@ -7,16 +7,16 @@ package frc.robot.commands;
 import frc.robot.subsystems.Outtake;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
 public class MoveOuttake extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Outtake outtake;
+  private Outtake outtake;
   private double speed;
-  private 
 
-  public MoveOuttake(Outtake subsystem, double speed) {
-    outtake = subsystem;
-    addRequirements(subsystem);
+
+  public MoveOuttake(Outtake outtake, double speed) {
+    this.outtake = outtake;
+     this.speed = speed;
+    addRequirements(outtake);
   }
 
   @Override
@@ -24,11 +24,7 @@ public class MoveOuttake extends Command {
 
   @Override
   public void execute() {
-
-    //método que define a velocidade
-   setVelocity (double speed) {
-    rodinhas.set(speed);
-}
+   outtake.setVelocity(speed);
   }
 
   @Override
