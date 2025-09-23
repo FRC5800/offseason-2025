@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.Elevadancia;
+import frc.robot.commands.ElevatorPID;
 import frc.robot.subsystems.Elevador;
 import frc.robot.subsystems.temp_subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.Joystick;
@@ -33,7 +34,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    elevador.setDefaultCommand(new Elevadancia(elevador, controle, controleBotoes));
+    elevador.setDefaultCommand(new ElevatorPID(elevador, controleBotoes));
   }
 
   public Command getAutonomousCommand() {

@@ -7,36 +7,35 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Elevador;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Elevadancia extends Command {
+public class ElevatorPID extends Command {
+  /** Creates a new ElevatorPID. */
+
   Joystick controle;
   Elevador elevador;
   PS4Controller controleBotoes;
 
-  /** Creates a new elevadancia. */
-  public Elevadancia(Elevador elevador, Joystick controle, PS4Controller controleBotoes) {
+  public ElevatorPID(Elevador elevador, PS4Controller controleBotoes) {
+    // Use addRequirements() here to declare subsystem dependencies.
     this.elevador = elevador;
-    this.controle = controle;
     this.controleBotoes = controleBotoes;
     addRequirements(elevador);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(controle.getY()) > Constants.ZONA_MORTA_CONTROLE) {
-      elevador.levantagem(-controle.getZ());
-    } else {
-      elevador.levantagem(0.0);
+    if(controleBotoes.getTriangleButton()) {
+      elevador.elevatorPIDMove(1);
+    }
+    if(controleBotoes.getCrossButton()) {
+      elevador.elevatorPIDMove(0);
     }
   }
 
@@ -50,4 +49,3 @@ public class Elevadancia extends Command {
     return false;
   }
 }
-

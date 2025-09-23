@@ -139,14 +139,22 @@ public class Elevador extends SubsystemBase {
         elevatorMaster.set(controlePos * 0.5);
     }
 
-    // set elevator position to top with PID
-    public void elevatorGotoTop() {
-        elevatorMaster.set(pidControllerElevador.calculate(getHeight(), ElevadorConstants.EV_POS_FINAL));
-    }
-
-    // set elevator position to bottom with PID
-    public void elevatorGotoBottom() {
-        elevatorMaster.set(pidControllerElevador.calculate(getHeight(), ElevadorConstants.EV_POS_INICIAL));
+    // set elevator position with PID
+    // target = 0 minimum height
+    // target = 1 max height
+    public void elevatorPIDMove(int target) {
+        switch (target) {
+            case 0:
+                elevatorMaster.set(pidControllerElevador.calculate(getHeight(), ElevadorConstants.EV_POS_INICIAL));
+                break;
+            case 1:
+                elevatorMaster.set(pidControllerElevador.calculate(getHeight(), ElevadorConstants.EV_POS_FINAL));
+                break;
+            default:
+                break;
+        }
+        
+        
     }
 
     // Get the height of the elevator
