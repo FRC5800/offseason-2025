@@ -4,44 +4,43 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.PS4Controller;
 
-public class ExampleSubsystem extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  public ExampleSubsystem() {}
+public class XDrive extends SubsystemBase {
+    private final SparkMax fl, fr, bl, br;
+     private PS4Controller PS4Controller;
+    
+        public XDrive(SparkMax fl, SparkMax fr, SparkMax bl, SparkMax br, PS4Controller joystick) {
+            this.fl = fl; this.fr = fr; this.bl = bl; this.br = br;
+            this.PS4Controller = joystick;
+    }
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
-  }
+    public void drive() {
+        double Vx = -PS4Controller.getLeftX();
+        double Vy = -PS4Controller.getLeftY();
+        double omega = -PS4Controller.get?
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
-  }
+        double FL = Vy + Vx + omega;
+        double FR = Vy - Vx - omega;
+        double BL = Vy - Vx + omega;
+        double BR = Vy + Vx - omega;
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+        // Normalização
+        double max = Math.max(Math.abs(FL), Math.max(Math.abs(FR), Math.max(Math.abs(BL), Math.abs(BR))));
+        if (max > 1.0) {
+            FL /= max; FR /= max; BL /= max; BR /= max;
+        }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
+        // Aplicando aos motores
+        fl.set(FL);
+        fr.set(FR);
+        bl.set(BL);
+        br.set(BR);
+    }
 }
