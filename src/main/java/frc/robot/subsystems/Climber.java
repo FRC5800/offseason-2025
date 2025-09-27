@@ -17,12 +17,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 //criando a classe do climber
 public class Climber extends SubsystemBase {
-  private SparkMax climberMotor = new SparkMax(3, MotorType.kBrushless);
+  private SparkMax climberMotor = new SparkMax(7, MotorType.kBrushless);
 
   public Climber() { //esse é o construtor dele
     var climberMotorMotorConfig = new SparkMaxConfig(); //pega o controlador dele, que é o SparkMax (o motor dele é o NEO)
     climberMotorMotorConfig.idleMode(IdleMode.kBrake); //IdleMode.kBrake segura a posição dele, ao invés de ir soltando aos poucos
-    climberMotorMotorConfig.smartCurrentLimit(40); //define limite de corrente
+    climberMotorMotorConfig.smartCurrentLimit(80); //define limite de corrente
     climberMotor.configure(climberMotorMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -33,6 +33,6 @@ public class Climber extends SubsystemBase {
 
   //metodo pra colocar/setar a velocidade dele
   public void run(double speed) {
-    climberMotor.set(speed);
+    climberMotor.set(speed*0.8);
   }
 }
