@@ -21,7 +21,6 @@ public class RobotContainer {
   private Climber climber = new Climber();
  
   public RobotContainer() {
-
     configureBindings();
   }
 
