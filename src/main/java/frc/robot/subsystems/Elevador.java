@@ -165,7 +165,12 @@ public class Elevador extends SubsystemBase {
     public double getHeight() {
         if(RobotBase.isSimulation())
             return elevatorSim.getPositionMeters();
-        return 0;
+        return ticksToMeters(masterEncoder.getPosition());
+    }
+
+    // convert encoder ticks to meters
+    public double ticksToMeters(double ticks) {
+        return (ticks/49) * 0.7950125000000001;
     }
 }
 
