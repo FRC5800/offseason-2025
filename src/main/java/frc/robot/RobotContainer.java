@@ -40,7 +40,6 @@ public class RobotContainer {
   private Climber climber = new Climber();
   private Elevador elevador = new Elevador();
 
-
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();

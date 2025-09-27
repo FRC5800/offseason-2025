@@ -26,7 +26,6 @@ public class MoveOuttake extends Command {
   @Override
   public void execute() {
   //atribuindo o método que define a velocidade
-   outtake.setVelocity(speed);
   }
 
   @Override
