@@ -7,7 +7,6 @@ package frc.robot;
 import frc.robot.commands.Elevadancia;
 import frc.robot.commands.ElevatorPID;
 import frc.robot.subsystems.Elevador;
-import frc.robot.subsystems.temp_subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,9 +22,6 @@ public class RobotContainer {
   Joystick controle = new Joystick(0);
   Elevador elevador = new Elevador();
   PS4Controller controleBotoes = new PS4Controller(1);
-  
-  //temp
-  DriveTrain driveTrain = new DriveTrain();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
