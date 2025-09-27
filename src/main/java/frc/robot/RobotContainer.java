@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.commands.MecherFunil;
 import frc.robot.subsystems.PivotFunil;
-import frc.robot.subsystems.temp_subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -22,9 +21,6 @@ public class RobotContainer {
   private Joystick controle = new Joystick(0);
   private PivotFunil pivotFunil = new PivotFunil();
 
-  // temp
-  DriveTrain driveTrain = new DriveTrain();
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
@@ -32,8 +28,6 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    driveTrain.setDefaultCommand(new RunCommand(() -> driveTrain.drive(), driveTrain));
-
     new JoystickButton(controle, 1).whileTrue(new MecherFunil(pivotFunil,1));
     new JoystickButton(controle, 2).whileTrue(new MecherFunil(pivotFunil, -1));
   }

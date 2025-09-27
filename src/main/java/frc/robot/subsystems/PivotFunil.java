@@ -32,14 +32,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PivotFunil extends SubsystemBase {
   // Pivot constants
-  private static final int LEAD_ID = 3;
+  private static final int LEAD_ID = 8;
   private static final double CLOSED_POS = -90;
   private static final double OPEN_POS = -35;
   private static final double PIVOT_LENGTH = 0.51804;
   private static final double PIVTO_MASS = 2.08691147;
 
   // Controllers
-  private SparkMax pivotMotor = new SparkMax(LEAD_ID, MotorType.kBrushed);
+  private WPI_TalonSRX pivotMotor = new WPI_TalonSRX(LEAD_ID);
 
   // PID Controller (temporary constants)
   public PIDController pidControllerPivot = new PIDController(0.015, 0.01, 0.005);
@@ -74,12 +74,6 @@ public class PivotFunil extends SubsystemBase {
 
   /** Creates a new PivotFunil. */
   public PivotFunil() {
-    // Configuring controller
-    var pivotMotorConfig = new SparkMaxConfig();
-    pivotMotorConfig.idleMode(IdleMode.kBrake);
-    pivotMotorConfig.smartCurrentLimit(40);
-    pivotMotor.configure(pivotMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
-
     // Append the pivot on the root
     pivotRoot.append(pivot);
 
@@ -117,7 +111,7 @@ public class PivotFunil extends SubsystemBase {
   }
 
   public void run(double speed) {
-    pivotMotor.set(speed * 0.5);
+    pivotMotor.set(ControlMode.PercentOutput, speed * 0.75);
   }
 
   public double getAngle() {
