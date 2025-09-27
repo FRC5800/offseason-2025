@@ -32,7 +32,6 @@ public class ClimberComm extends Command {
   @Override
   public void execute() {
     climber.run(-controle.getY());
-
   }
 
   // Called once the command ends or is interrupted.
