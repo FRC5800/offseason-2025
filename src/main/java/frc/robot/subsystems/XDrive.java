@@ -25,6 +25,14 @@ public class XDrive extends SubsystemBase {
 
     AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
+    double FL = 0;
+    double FR = 0;
+    double BL = 0;
+    double BR = 0;
+
+    double lerp(double a, double b, double f)  {
+        return a + f * (b - a);
+    }
 
     public XDrive() {
         gyro.zeroYaw();
@@ -63,16 +71,16 @@ public class XDrive extends SubsystemBase {
         double omega = r;
 
         double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(r), 1);
-        double FL = (rotY + rotX + omega) / denominator;
-        double FR = (rotY - rotX - omega) / denominator;
-        double BL = (rotY - rotX + omega) / denominator;
-        double BR = (rotY + rotX - omega) / denominator;
+        FL = lerp(FL, ((rotY + rotX + omega) / denominator) * 0.7, 0.1);
+        FR = lerp(FR, ((rotY - rotX - omega) / denominator) * 0.7, 0.1);
+        BL = lerp(BL, ((rotY - rotX + omega) / denominator) * 0.7, 0.1);
+        BR = lerp(BR, ((rotY + rotX - omega) / denominator) * 0.7, 0.1);
 
         // Aplicando aos motores
-        lf.set(FL*0.7);
-        rf.set(FR*0.7);
-        lb.set(BL*0.7);
-        rb.set(BR*0.7);
+        lf.set(FL);
+        rf.set(FR);
+        lb.set(BL);
+        rb.set(BR);
     }
 
     public void periodic(){

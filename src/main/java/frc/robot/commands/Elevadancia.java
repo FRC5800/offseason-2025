@@ -13,13 +13,13 @@ import frc.robot.subsystems.Elevador;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Elevadancia extends Command {
-  Joystick controle;
+  Joystick controller;
   Elevador elevador;
 
   /** Creates a new elevadancia. */
-  public Elevadancia(Elevador elevador, Joystick controle) {
+  public Elevadancia(Elevador elevador, Joystick controller) {
     this.elevador = elevador;
-    this.controle = controle;
+    this.controller = controller;
     addRequirements(elevador);
   }
 
@@ -32,11 +32,12 @@ public class Elevadancia extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(controle.getY()) > Constants.ZONA_MORTA_CONTROLE) {
-      elevador.levantagem(controle.getY());
-    } else {
-      elevador.levantagem(0.0);
-    }
+    if(controller.getPOV() == 0)
+      elevador.levantagem(-0.7);
+    else if(controller.getPOV() == 180)
+      elevador.levantagem(0.5);
+    else
+      elevador.levantagem(0);
   }
 
   // Called once the command ends or is interrupted.

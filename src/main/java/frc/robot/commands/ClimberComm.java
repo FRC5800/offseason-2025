@@ -15,13 +15,14 @@ import frc.robot.subsystems.Climber;
 public class ClimberComm extends Command {
   private Climber climber;
   Joystick controle;
-  PS4Controller controleBotoes;
+  private double speed;
 
   /** Creates a new ClimberComm. */
-  public ClimberComm(Climber climber, Joystick controle) {
+  public ClimberComm(Climber climber, Joystick controle, double speed) {
     this.climber = climber;
     addRequirements(climber);
     this.controle = controle;
+    this.speed = speed;
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +32,7 @@ public class ClimberComm extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.run(-controle.getY());
+    climber.run(speed);
   }
 
   // Called once the command ends or is interrupted.

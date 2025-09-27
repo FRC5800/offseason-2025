@@ -12,15 +12,12 @@ import frc.robot.subsystems.Elevador;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorPID extends Command {
   /** Creates a new ElevatorPID. */
-
-  Joystick controle;
   Elevador elevador;
-  PS4Controller controleBotoes;
+  int target;
 
-  public ElevatorPID(Elevador elevador, PS4Controller controleBotoes) {
+  public ElevatorPID(Elevador elevador, int target) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.elevador = elevador;
-    this.controleBotoes = controleBotoes;
     addRequirements(elevador);
   }
 
@@ -31,21 +28,18 @@ public class ElevatorPID extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(controleBotoes.getTriangleButton()) {
-      elevador.elevatorPIDMove(1);
-    }
-    if(controleBotoes.getCrossButton()) {
-      elevador.elevatorPIDMove(0);
-    }
+    elevador.elevatorPIDMove(target);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    elevador.levantagem(0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return elevador.inPosition();
   }
 }

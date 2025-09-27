@@ -48,10 +48,13 @@ public class RobotContainer {
 
   private void configureBindings() {
     xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
-    climber.setDefaultCommand(new ClimberComm(climber, controller));
     elevador.setDefaultCommand(new Elevadancia(elevador, controller));
     new JoystickButton(controller, 1).whileTrue(new MecherFunil(pivotFunil,1));
     new JoystickButton(controller, 2).whileTrue(new MecherFunil(pivotFunil, -1));
+    new JoystickButton(controller, 3).whileTrue(new ClimberComm(climber, controller, 0.5));
+    new JoystickButton(controller, 4).whileTrue(new ClimberComm(climber, controller, -0.5));
+    new JoystickButton(controller, 5).onTrue(new ElevatorPID(elevador,  0));
+    new JoystickButton(controller, 6).onTrue(new ElevatorPID(elevador, 1));
   }
 
   public Command getAutonomousCommand() {
