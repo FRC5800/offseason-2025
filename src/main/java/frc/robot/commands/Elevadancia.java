@@ -34,7 +34,7 @@ public class Elevadancia extends Command {
   @Override
   public void execute() {
     if(Math.abs(controle.getY()) > Constants.ZONA_MORTA_CONTROLE) {
-      elevador.levantagem(-controle.getZ());
+      elevador.levantagem(controle.getY());
     } else {
       elevador.levantagem(0.0);
     }

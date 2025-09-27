@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   Joystick controle = new Joystick(0);
   Elevador elevador = new Elevador();
-  PS4Controller controleBotoes = new PS4Controller(0);
+  PS4Controller controleBotoes = new PS4Controller(1);
   
   //temp
   DriveTrain driveTrain = new DriveTrain();
@@ -34,7 +34,8 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    elevador.setDefaultCommand(new ElevatorPID(elevador, controleBotoes));
+    // elevador.setDefaultCommand(new ElevatorPID(elevador, controleBotoes));
+    elevador.setDefaultCommand(new Elevadancia(elevador, controle, controleBotoes));
   }
 
   public Command getAutonomousCommand() {
