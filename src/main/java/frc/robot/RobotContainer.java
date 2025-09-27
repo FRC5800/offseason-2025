@@ -25,7 +25,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(controller.getY(), controller.getX(), controller.getZ()), xDrive));
+    xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
   }
 
   /**

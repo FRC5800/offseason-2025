@@ -10,7 +10,10 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -19,8 +22,12 @@ public class XDrive extends SubsystemBase {
     private SparkMax rf = new SparkMax(2, MotorType.kBrushless);
     private SparkMax rb = new SparkMax(4, MotorType.kBrushless);
     private SparkMax lb = new SparkMax(3, MotorType.kBrushless);
-    
+
+    AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+
+
     public XDrive() {
+        gyro.zeroYaw();
         var lfconfig = new SparkMaxConfig();
         lfconfig.idleMode(IdleMode.kBrake);
         lfconfig.smartCurrentLimit(80);
@@ -45,18 +52,21 @@ public class XDrive extends SubsystemBase {
         lbconfig.disableFollowerMode();
         lb.configure(lbconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
+
     }
 
     public void drive(double y, double x, double r) {
-        double Vx = x * 1.1;
-        double Vy = -y;
+        double botHeading = -Math.toRadians(gyro.getAngle());
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+        rotX *= 1.1;
         double omega = r;
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(r), 1);
-        double FL = (Vy + Vx + omega) / denominator;
-        double FR = (Vy - Vx - omega) / denominator;
-        double BL = (Vy - Vx + omega) / denominator;
-        double BR = (Vy + Vx - omega) / denominator;
+        double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(r), 1);
+        double FL = (rotY + rotX + omega) / denominator;
+        double FR = (rotY - rotX - omega) / denominator;
+        double BL = (rotY - rotX + omega) / denominator;
+        double BR = (rotY + rotX - omega) / denominator;
 
         // Aplicando aos motores
         lf.set(FL*0.7);
@@ -64,4 +74,11 @@ public class XDrive extends SubsystemBase {
         lb.set(BL*0.7);
         rb.set(BR*0.7);
     }
+
+    public void periodic(){
+            
+    SmartDashboard.putNumber("gyro", gyro.getAngle());
+    
+    
+        }
 }
