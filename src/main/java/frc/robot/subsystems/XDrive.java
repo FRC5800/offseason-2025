@@ -6,25 +6,26 @@ package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 
 public class XDrive extends SubsystemBase {
-    private final SparkMax fl, fr, bl, br;
-     private PS4Controller PS4Controller;
+    private SparkMax lf = new SparkMax(1, MotorType.kBrushless);
+    private SparkMax rf = new SparkMax(2, MotorType.kBrushless);
+    private SparkMax rb = new SparkMax(3, MotorType.kBrushless);
+    private SparkMax lb = new SparkMax(4, MotorType.kBrushless);
     
-        public XDrive(SparkMax fl, SparkMax fr, SparkMax bl, SparkMax br, PS4Controller joystick) {
-            this.fl = fl; this.fr = fr; this.bl = bl; this.br = br;
-            this.PS4Controller = joystick;
-    }
+    public XDrive() {}
 
-    public void drive() {
-        double Vx = -PS4Controller.getLeftX();
-        double Vy = -PS4Controller.getLeftY();
-        double omega = -PS4Controller.get?
+    public void drive(double y, double x, double r) {
+        double Vx = x;
+        double Vy = y;
+        double omega = -r;
 
         double FL = Vy + Vx + omega;
         double FR = Vy - Vx - omega;
@@ -34,13 +35,16 @@ public class XDrive extends SubsystemBase {
         // Normalização
         double max = Math.max(Math.abs(FL), Math.max(Math.abs(FR), Math.max(Math.abs(BL), Math.abs(BR))));
         if (max > 1.0) {
-            FL /= max; FR /= max; BL /= max; BR /= max;
+            FL /= max;
+            FR /= max;
+            BL /= max;
+            BR /= max;
         }
 
         // Aplicando aos motores
-        fl.set(FL);
-        fr.set(FR);
-        bl.set(BL);
-        br.set(BR);
+        lf.set(FL);
+        rf.set(FR);
+        lb.set(BL);
+        rb.set(BR);
     }
 }
