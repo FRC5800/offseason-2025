@@ -16,15 +16,12 @@ public class RobotContainer {
   Climber climber = new Climber();
  
   public RobotContainer() {
-
     configureBindings();
   }
 
   
   private void configureBindings() {
-
     climber.setDefaultCommand(new ClimberComm(climber, controle));
-   
   }
 
   /**
