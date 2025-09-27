@@ -4,47 +4,64 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS4Controller;
+
 
 public class XDrive extends SubsystemBase {
     private SparkMax lf = new SparkMax(1, MotorType.kBrushless);
     private SparkMax rf = new SparkMax(2, MotorType.kBrushless);
-    private SparkMax rb = new SparkMax(3, MotorType.kBrushless);
-    private SparkMax lb = new SparkMax(4, MotorType.kBrushless);
+    private SparkMax rb = new SparkMax(4, MotorType.kBrushless);
+    private SparkMax lb = new SparkMax(3, MotorType.kBrushless);
     
-    public XDrive() {}
+    public XDrive() {
+        var lfconfig = new SparkMaxConfig();
+        lfconfig.idleMode(IdleMode.kBrake);
+        lfconfig.smartCurrentLimit(80);
+        lfconfig.disableFollowerMode();
+        lf.configure(lfconfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+        var rfconfig = new SparkMaxConfig();
+        rfconfig.idleMode(IdleMode.kBrake);
+        rfconfig.smartCurrentLimit(80);
+        rfconfig.disableFollowerMode();
+        rf.configure(rfconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+
+        var rbconfig = new SparkMaxConfig();
+        rbconfig.idleMode(IdleMode.kBrake);
+        rbconfig.smartCurrentLimit(80);
+        rbconfig.disableFollowerMode();
+        rb.configure(rbconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+
+        var lbconfig = new SparkMaxConfig();
+        lbconfig.idleMode(IdleMode.kBrake);
+        lbconfig.smartCurrentLimit(80);
+        lbconfig.disableFollowerMode();
+        lb.configure(lbconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+
+    }
 
     public void drive(double y, double x, double r) {
-        double Vx = x;
-        double Vy = y;
-        double omega = -r;
+        double Vx = x * 1.1;
+        double Vy = -y;
+        double omega = r;
 
-        double FL = Vy + Vx + omega;
-        double FR = Vy - Vx - omega;
-        double BL = Vy - Vx + omega;
-        double BR = Vy + Vx - omega;
-
-        // Normalização
-        double max = Math.max(Math.abs(FL), Math.max(Math.abs(FR), Math.max(Math.abs(BL), Math.abs(BR))));
-        if (max > 1.0) {
-            FL /= max;
-            FR /= max;
-            BL /= max;
-            BR /= max;
-        }
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(r), 1);
+        double FL = (Vy + Vx + omega) / denominator;
+        double FR = (Vy - Vx - omega) / denominator;
+        double BL = (Vy - Vx + omega) / denominator;
+        double BR = (Vy + Vx - omega) / denominator;
 
         // Aplicando aos motores
-        lf.set(FL);
-        rf.set(FR);
-        lb.set(BL);
-        rb.set(BR);
+        lf.set(FL*0.7);
+        rf.set(FR*0.7);
+        lb.set(BL*0.7);
+        rb.set(BR*0.7);
     }
 }
