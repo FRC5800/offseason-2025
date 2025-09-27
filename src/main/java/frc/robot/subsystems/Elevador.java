@@ -31,8 +31,8 @@ import frc.robot.Constants.ElevadorConstants;
 
 public class Elevador extends SubsystemBase {
     // Elevator constants
-    private static final int LEAD_ID = 1;
-    private static final int FOLLOWER_ID = 2;
+    private static final int LEAD_ID = 5;
+    private static final int FOLLOWER_ID = 6;
     private static final double REDUCTION = 5.14;
     private static final double CARRIAGE_MASS = 12.54956;
     private static final double DRUM_RADIUS = 0.01429;
@@ -85,14 +85,17 @@ public class Elevador extends SubsystemBase {
     public Elevador() {
         // Configure controllers
         var motorMasterConfig = new SparkMaxConfig(); // Creates a object of SparkMaxConfig
-        motorMasterConfig.smartCurrentLimit(60); // Set max current in Ampers
+        // motorMasterConfig.smartCurrentLimit(80); // Set max current in Ampers
         motorMasterConfig.idleMode(IdleMode.kBrake); // Set idle mode
+        motorMasterConfig.inverted(false);
+        motorMasterConfig.disableFollowerMode();
         elevatorMaster.configure(motorMasterConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters); // Apply the configuration to the controller
 
         var motorSlaveConfig = new SparkMaxConfig();
-        motorSlaveConfig.smartCurrentLimit(60);
+        // motorSlaveConfig.smartCurrentLimit(80);
         motorSlaveConfig.idleMode(IdleMode.kBrake);
-        motorSlaveConfig.follow(elevatorMaster);
+        motorSlaveConfig.inverted(false);
+        motorSlaveConfig.disableFollowerMode();
         elevatorSlave.configure(motorSlaveConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         // Configure encoders
@@ -136,7 +139,8 @@ public class Elevador extends SubsystemBase {
 
     // Raise elevator method
     public void levantagem(double controlePos) {
-        elevatorMaster.set(controlePos * 0.5);
+        elevatorMaster.set(-controlePos * 0.5);
+        elevatorSlave.set(controlePos * 0.5);
     }
 
     // set elevator position with PID
