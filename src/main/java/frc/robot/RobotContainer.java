@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.MecherFunil;
+import frc.robot.commands.Auto.AutoRotate;
+import frc.robot.commands.Auto.MoveToTrajectory;
 import frc.robot.subsystems.PivotFunil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,7 +57,10 @@ public class RobotContainer {
     new JoystickButton(controller, 3).whileTrue(new ClimberComm(climber, controller, 0.5));
     new JoystickButton(controller, 4).whileTrue(new ClimberComm(climber, controller, -0.5));
     new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  5));
+
     new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 150));
+    // new JoystickButton(controller, 1).onTrue(new AutoRotate(xDrive, 1));
+    // new JoystickButton(controller, 2).onTrue(new AutoRotate(xDrive, 6));
   }
 
   public Command getAutonomousCommand() {

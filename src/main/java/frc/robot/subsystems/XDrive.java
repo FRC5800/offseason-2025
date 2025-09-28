@@ -14,6 +14,9 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,6 +24,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
@@ -30,17 +34,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class XDrive extends SubsystemBase {
-    private SparkMax lf = new SparkMax(1, MotorType.kBrushless);
-    private SparkMax rf = new SparkMax(2, MotorType.kBrushless);
-    private SparkMax rb = new SparkMax(4, MotorType.kBrushless);
-    private SparkMax lb = new SparkMax(3, MotorType.kBrushless);
+    public SparkMax lf = new SparkMax(1, MotorType.kBrushless);
+    public SparkMax rf = new SparkMax(2, MotorType.kBrushless);
+    public SparkMax rb = new SparkMax(4, MotorType.kBrushless);
+    public SparkMax lb = new SparkMax(3, MotorType.kBrushless);
 
-    private RelativeEncoder lfEncoder;
-    private RelativeEncoder rfEncoder;
-    private RelativeEncoder rbEncoder;
-    private RelativeEncoder lbEncoder;
+    public RelativeEncoder lfEncoder;
+    public RelativeEncoder rfEncoder;
+    public RelativeEncoder rbEncoder;
+    public RelativeEncoder lbEncoder;
 
-    AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+    public boolean active = true;
+
+    public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
     double FL = 0;
     double FR = 0;
@@ -51,9 +57,9 @@ public class XDrive extends SubsystemBase {
     double Y = 0;
     double R = 0;
 
-    Field2d field = new Field2d();
+    public Field2d field = new Field2d();
 
-    MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
+    public MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
         new Translation2d(-0.25, 0.25),
         new Translation2d(0.25, 0.25),
         new Translation2d(-0.25, -0.25),
@@ -64,6 +70,22 @@ public class XDrive extends SubsystemBase {
         new MecanumDriveWheelPositions(),
         new Pose2d()
     );
+
+    public void autoRotate(){
+        drive(0, 0, rotationController.calculate(gyro.getAngle()));
+    }
+
+    PIDController yController = new PIDController(0.02, 0, 0);
+    PIDController xController = new PIDController(0.02, 0, 0);
+    ProfiledPIDController rController = new ProfiledPIDController(1000, 0, 0, new TrapezoidProfile.Constraints(3, 1));
+    public HolonomicDriveController controller = new HolonomicDriveController(xController, yController, rController);
+
+    public PIDController rotationController = new PIDController(0.005, 0, 0);
+
+    public PIDController lfPidController = new PIDController(0.01, 0, 0);
+    public PIDController rfPidController = new PIDController(0.01, 0, 0);
+    public PIDController lbPidController = new PIDController(0.01, 0, 0);
+    public PIDController rbPidController = new PIDController(0.01, 0, 0);
 
     VisionSystem visionSystem = new VisionSystem();
 
@@ -103,9 +125,20 @@ public class XDrive extends SubsystemBase {
         rbEncoder = rb.getEncoder();
 
         SmartDashboard.putData("field", field);
+        rotationController.setTolerance(1);
+    }
+
+    public Pose2d getPose2d(){
+        return poseEstimator.getEstimatedPosition();
+    }
+
+    public void resetController(){
+        controller = new HolonomicDriveController(xController, yController, rController);
     }
 
     public void drive(double y, double x, double r) {
+        if(!active)
+            return;
         double botHeading = -Math.toRadians(gyro.getAngle());
         
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
