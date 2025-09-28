@@ -44,50 +44,51 @@ public class PivotFunil extends SubsystemBase {
   // PID Controller (temporary constants)
   public PIDController pidControllerPivot = new PIDController(0.015, 0.01, 0.005);
 
-  // Mechanism canva
-  private Mechanism2d pivotMech = new Mechanism2d(0.5, 0.5);
-  private MechanismRoot2d pivotRoot = pivotMech.getRoot("Pivot root", 0.25, 0.4);
-  private MechanismLigament2d pivot = new MechanismLigament2d("Pivot", PIVOT_LENGTH, OPEN_POS);
+  // // Mechanism canva
+  // private Mechanism2d pivotMech = new Mechanism2d(0.5, 0.5);
+  // private MechanismRoot2d pivotRoot = pivotMech.getRoot("Pivot root", 0.25, 0.4);
+  // private MechanismLigament2d pivot = new MechanismLigament2d("Pivot", PIVOT_LENGTH, OPEN_POS);
 
-  // Simulation objects
-  private SingleJointedArmSim pivotSim = new SingleJointedArmSim(
-    DCMotor.getCIM(1),
-    100,
-    SingleJointedArmSim.estimateMOI(PIVOT_LENGTH, PIVTO_MASS),
-    PIVOT_LENGTH,
-    Units.degreesToRadians(CLOSED_POS),
-    Units.degreesToRadians(OPEN_POS),
-    true,
-    Units.degreesToRadians(OPEN_POS)
-  );
+  // // Simulation objects
+  // private SingleJointedArmSim pivotSim = new SingleJointedArmSim(
+  //   DCMotor.getCIM(1),
+  //   100,
+  //   SingleJointedArmSim.estimateMOI(PIVOT_LENGTH, PIVTO_MASS),
+  //   PIVOT_LENGTH,
+  //   Units.degreesToRadians(CLOSED_POS),
+  //   Units.degreesToRadians(OPEN_POS),
+  //   true,
+  //   Units.degreesToRadians(OPEN_POS)
+  // );
     
-  // Pivot position
-  private Pose3d pivotPose;
-  private Pose3d basePose;
+  // // Pivot position
+  // private Pose3d pivotPose;
+  // private Pose3d basePose;
 
-  // Array publisher
-  private StructArrayPublisher<Pose3d> posePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Pivot position", Pose3d.struct).publish();
-  private StructArrayPublisher<Pose3d> basePosePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Base pivot position", Pose3d.struct).publish();
+  // // Array publisher
+  // private StructArrayPublisher<Pose3d> posePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Pivot position", Pose3d.struct).publish();
+  // private StructArrayPublisher<Pose3d> basePosePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("Base pivot position", Pose3d.struct).publish();
 
-  // temp publhiser
-  private StructArrayPublisher<Pose3d> tempPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("temp position", Pose3d.struct).publish();
+  // // temp publhiser
+  // private StructArrayPublisher<Pose3d> tempPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("temp position", Pose3d.struct).publish();
 
   /** Creates a new PivotFunil. */
   public PivotFunil() {
     // Append the pivot on the root
-    pivotRoot.append(pivot);
+    // pivotRoot.append(pivot);
 
     // Put the canva of the mechanism on Dashboard
-    SmartDashboard.putData("Pivot Mech", pivotMech);
+    // SmartDashboard.putData("Pivot Mech", pivotMech);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Pivot angle", getAngle());
-    SmartDashboard.putNumber("Motor", pivotMotor.get());
+    // SmartDashboard.putNumber("Pivot angle", getAngle());
+    // SmartDashboard.putNumber("Motor", pivotMotor.get());
   }
 
+  /*
   @Override
   public void simulationPeriodic() {
     // Set the input of the pivot and update simulation
@@ -108,15 +109,15 @@ public class PivotFunil extends SubsystemBase {
     posePublisher.set(new Pose3d[]{ pivotPose });
     basePosePublisher.set(new Pose3d[] { basePose });
     tempPublisher.set(new Pose3d[]{ tempPose });
-  }
+  }*/
 
   public void run(double speed) {
     pivotMotor.set(ControlMode.PercentOutput, speed);
   }
 
   public double getAngle() {
-    if (RobotBase.isSimulation())
-      return Units.radiansToDegrees(pivotSim.getAngleRads());
+    // if (RobotBase.isSimulation())
+    //   return Units.radiansToDegrees(pivotSim.getAngleRads());
     return 0;
   }
 }

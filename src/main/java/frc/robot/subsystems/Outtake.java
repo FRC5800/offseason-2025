@@ -23,9 +23,6 @@ public class Outtake extends SubsystemBase {
   //motor das rodas do outtake
   final SparkMax rodinhas; 
 
-  //sensor ultrassônico que vem do input do roborio
-  DigitalInput ultraSonicInput = new DigitalInput(1);
-
   /*Construtor do outtake com config do motor*/
     public Outtake () {
     
@@ -34,15 +31,9 @@ public class Outtake extends SubsystemBase {
        rodinhasConfig.smartCurrentLimit(40);
        rodinhas.configure(rodinhasConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
-
-  //resgata o input do sensor
-  public boolean getUltraSonic(){
-    return ultraSonicInput.get();
-  }
   
   @Override
   public void periodic() {
-        SmartDashboard.putBoolean("UltraSonicInput", getUltraSonic()); //mostra o input do sensor na dashboard
   }
 
 }

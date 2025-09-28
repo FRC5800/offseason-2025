@@ -54,8 +54,8 @@ public class RobotContainer {
     new JoystickButton(controller, 2).whileTrue(new MecherFunil(pivotFunil, -1));
     new JoystickButton(controller, 3).whileTrue(new ClimberComm(climber, controller, 0.5));
     new JoystickButton(controller, 4).whileTrue(new ClimberComm(climber, controller, -0.5));
-    new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  0));
-    new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 1));
+    new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  5));
+    new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 150));
   }
 
   public Command getAutonomousCommand() {

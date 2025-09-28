@@ -14,35 +14,34 @@ import frc.robot.subsystems.Elevador;
 public class ElevatorPID extends Command {
   /** Creates a new ElevatorPID. */
   Elevador elevador;
-  int target;
+  double target;
 
-  public ElevatorPID(Elevador elevador, int target) {
+  public ElevatorPID(Elevador elevador, double target) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.elevador = elevador;
+    this.target = target;
     addRequirements(elevador);
   }
 
   // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+  @Override 
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevador.elevatorPIDMove(target);
-    SmartDashboard.putBoolean("PID elevador", true);
+    elevador.setTarget(target);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    elevador.levantagem(0);
-    SmartDashboard.putBoolean("PID elevador", false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevador.inPosition();
+    return false;
   }
 }

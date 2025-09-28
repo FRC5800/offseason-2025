@@ -28,14 +28,14 @@ public class MecherFunil extends Command {
   @Override
   public void execute() {
     pivotFunil.run(speed);
-    SmartDashboard.putBoolean("Rodando", true);
+    // SmartDashboard.putBoolean("Rodando", true);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     pivotFunil.run(0);
-    SmartDashboard.putBoolean("Rodando", false);
+    // SmartDashboard.putBoolean("Rodando", false);
   }
 
   // Returns true when the command should end.

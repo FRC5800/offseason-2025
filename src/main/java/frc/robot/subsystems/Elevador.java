@@ -38,7 +38,7 @@ public class Elevador extends SubsystemBase {
     private static final double CARRIAGE_MASS = 12.54956;
     private static final double DRUM_RADIUS = 0.01429;
     private static final double MIN_HEIGHT = 5;
-    private static final double MAX_HEIGHT = 100;
+    private static final double MAX_HEIGHT = 50;
     private static final double FIRST_STATE = 0.93980;
     private static final double SECOND_STATE = 1.77765;
     private static final double THIRD_STATE = 1.97174;
@@ -51,44 +51,47 @@ public class Elevador extends SubsystemBase {
     private RelativeEncoder masterEncoder;
     private RelativeEncoder slaveEncoder;
 
+    double target = 5;
     // Controllers (temporary constants)
-    public PIDController pidControllerElevador = new PIDController(0.5, 0, 0);
+    public PIDController pidControllerElevador = new PIDController(0.05, 0, 0);
     // Canva mechanism
-    private Mechanism2d elevatorMech = new Mechanism2d(3, 3);
-    private MechanismRoot2d elevatorRoot = elevatorMech.getRoot("Elevator root", 1.5, 0);
-    private MechanismLigament2d elevator = new MechanismLigament2d("Elevator", 1, 90);
+    // private Mechanism2d elevatorMech = new Mechanism2d(3, 3);
+    // private MechanismRoot2d elevatorRoot = elevatorMech.getRoot("Elevator root", 1.5, 0);
+    // private MechanismLigament2d elevator = new MechanismLigament2d("Elevator", 1, 90);
 
     // Simulation classes
-    private ElevatorSim elevatorSim = new ElevatorSim(
-        DCMotor.getCIM(2),
-        REDUCTION,
-        CARRIAGE_MASS,
-        DRUM_RADIUS,
-        MIN_HEIGHT,
-        MAX_HEIGHT,
-        true,
-        MIN_HEIGHT);
+    // private ElevatorSim elevatorSim = new ElevatorSim(
+    //     DCMotor.getCIM(2),
+    //     REDUCTION,
+    //     CARRIAGE_MASS,
+    //     DRUM_RADIUS,
+    //     MIN_HEIGHT,
+    //     MAX_HEIGHT,
+    //     true,
+    //     MIN_HEIGHT);
 
     // States positions
-    private Pose3d state1Position;
-    private Pose3d state2Position;
-    private Pose3d state3Position;
+    // private Pose3d state1Position;
+    // private Pose3d state2Position;
+    // private Pose3d state3Position;
 
     // Publishers states positions
-    private StructArrayPublisher<Pose3d> state1Publisher = NetworkTableInstance.getDefault().getStructArrayTopic("State 1", Pose3d.struct).publish();
-    private StructArrayPublisher<Pose3d> state2Publisher = NetworkTableInstance.getDefault().getStructArrayTopic("State 2", Pose3d.struct).publish();
-    private StructArrayPublisher<Pose3d> state3Publisher = NetworkTableInstance.getDefault().getStructArrayTopic("State 3", Pose3d.struct).publish();
+    // private StructArrayPublisher<Pose3d> state1Publisher = NetworkTableInstance.getDefault().getStructArrayTopic("State 1", Pose3d.struct).publish();
+    // private StructArrayPublisher<Pose3d> state2Publisher = NetworkTableInstance.getDefault().getStructArrayTopic("State 2", Pose3d.struct).publish();
+    // private StructArrayPublisher<Pose3d> state3Publisher = NetworkTableInstance.getDefault().getStructArrayTopic("State 3", Pose3d.struct).publish();
 
     // Temp publishers
-    private StructArrayPublisher<Pose3d> tempPose01 = NetworkTableInstance.getDefault().getStructArrayTopic("Temp 01", Pose3d.struct).publish();
-    private StructArrayPublisher<Pose3d> tempPose02 = NetworkTableInstance.getDefault().getStructArrayTopic("Temp 02", Pose3d.struct).publish();
+    // private StructArrayPublisher<Pose3d> tempPose01 = NetworkTableInstance.getDefault().getStructArrayTopic("Temp 01", Pose3d.struct).publish();
+    // private StructArrayPublisher<Pose3d> tempPose02 = NetworkTableInstance.getDefault().getStructArrayTopic("Temp 02", Pose3d.struct).publish();
 
     public Elevador() {
-        pidControllerElevador.setTolerance(1);
+        SmartDashboard.putString("Rodou?", "Não");
+        SmartDashboard.putNumber("Target", -1);
+        pidControllerElevador.setTolerance(0.5);
 
         SmartDashboard.putData("reset elevator encoders", new InstantCommand(() -> {masterEncoder.setPosition(0); slaveEncoder.setPosition(0);}));
         // Configure controllers
-        var motorMasterConfig = new SparkMaxConfig(); // Creates a object of SparkMaxConfig
+        var motorMasterConfig = new SparkMaxConfig(); // C
         // motorMasterConfig.smartCurrentLimit(80); // Set max current in Ampers
         motorMasterConfig.idleMode(IdleMode.kBrake); // Set idle mode
         motorMasterConfig.inverted(false);
@@ -107,21 +110,24 @@ public class Elevador extends SubsystemBase {
         slaveEncoder = elevatorSlave.getEncoder();
 
         // Canva configuration
-        elevatorRoot.append(elevator); // Append the elevator on the root
-        SmartDashboard.putData("Elevator Mech", elevatorMech); // Put the canva of the elevator on the Dashboard
+        // elevatorRoot.append(elevator); // Append the elevator on the root
+        // SmartDashboard.putData("Elevator Mech", elevatorMech); // Put the canva of the elevator on the Dashboard
     };
 
     @Override
     public void periodic() {
+        elevatorPIDMove(target);
     // This method will be called once per scheduler run
         SmartDashboard.putNumber("Elevator Height", getHeight());
-        SmartDashboard.putNumber("left elevator", ticksToMeters(masterEncoder.getPosition()));
-        SmartDashboard.putNumber("right elevator", ticksToMeters(slaveEncoder.getPosition()));
-        SmartDashboard.putNumber("left elevator motor", elevatorMaster.get());
-        SmartDashboard.putNumber("right elevator motor", elevatorSlave.get());
+        // SmartDashboard.putNumber("left elevator", ticksToMeters(masterEncoder.getPosition()));
+        // SmartDashboard.putNumber("right elevator", ticksToMeters(slaveEncoder.getPosition()));
+        // SmartDashboard.putNumber("left elevator motor", elevatorMaster.get());
+        // SmartDashboard.putNumber("right elevator motor", elevatorSlave.get());
         SmartDashboard.putBoolean("in the setpoint", pidControllerElevador.atSetpoint());
+        SmartDashboard.putNumber("elevator setpoint", pidControllerElevador.getSetpoint());
     }
 
+    /*
     @Override
     public void simulationPeriodic() {
     // This method will be called once per scheduler run in simulation
@@ -144,36 +150,38 @@ public class Elevador extends SubsystemBase {
         Pose3d basePivot = new Pose3d();
         tempPose01.set(new Pose3d[]{ basePivot });
         tempPose02.set(new Pose3d[]{ pivotPose });
-    }
+    }*/
+
+
 
     // Raise elevator method
     public void levantagem(double controlePos) {
-        elevatorMaster.set(-controlePos * 0.5);
-        elevatorSlave.set(controlePos * 0.5);
+        elevatorMaster.set(-controlePos * 0.25);
+        elevatorSlave.set(controlePos * 0.25);
     }
 
     // set elevator position with PID
     // target = 0 minimum height
     // target = 1 max height
-    public void elevatorPIDMove(int target) {
-        switch (target) {
-            case 0:
-                elevatorMaster.set(MathUtil.clamp((-pidControllerElevador.calculate(getHeight(), MIN_HEIGHT)), -0.25, 0.25));
-                elevatorSlave.set(MathUtil.clamp((pidControllerElevador.calculate(getHeight(), MIN_HEIGHT)), -0.25, 0.25));
-                break;
-            case 1:
-                elevatorMaster.set(MathUtil.clamp((-pidControllerElevador.calculate(getHeight(), MAX_HEIGHT)), -0.25, 0.25));
-                elevatorSlave.set(MathUtil.clamp((pidControllerElevador.calculate(getHeight(), MAX_HEIGHT)), -0.25, 0.25));
-                break;
-            default:
-                break;
-        }
+    public void elevatorPIDMove(double target) {
+        // SmartDashboard.putString("h,jjgh,hkvvhk.vk,jh?", "Rodou");
+        SmartDashboard.putNumber("Target", target);
+
+        pidControllerElevador.setSetpoint(target);
+        double speed = MathUtil.clamp(pidControllerElevador.calculate(getHeight()), -0.25, 0.25);
+
+        elevatorMaster.set(speed);
+        elevatorSlave.set(-speed);
+    }
+
+    public void setTarget(double target){
+        this.target = target;
     }
 
     // Get the height of the elevator
     public double getHeight() {
-        if(RobotBase.isSimulation())
-            return elevatorSim.getPositionMeters();
+        // if(RobotBase.isSimulation())
+        //     return elevatorSim.getPositionMeters();
         return (ticksToMeters(masterEncoder.getPosition()) + -ticksToMeters(slaveEncoder.getPosition()))/2;
     }
 
