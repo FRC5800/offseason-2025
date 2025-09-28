@@ -111,7 +111,7 @@ public class PivotFunil extends SubsystemBase {
   }
 
   public void run(double speed) {
-    pivotMotor.set(ControlMode.PercentOutput, speed * 0.75);
+    pivotMotor.set(ControlMode.PercentOutput, speed);
   }
 
   public double getAngle() {

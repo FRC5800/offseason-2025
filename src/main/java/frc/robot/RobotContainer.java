@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   private XDrive xDrive = new XDrive();
   private Joystick controller = new Joystick(0);
+  private Joystick controller02 = new Joystick(1);
   private Climber climber = new Climber();
   private Elevador elevador = new Elevador();
   private PivotFunil pivotFunil = new PivotFunil();
@@ -48,13 +49,13 @@ public class RobotContainer {
 
   private void configureBindings() {
     xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
-    elevador.setDefaultCommand(new Elevadancia(elevador, controller));
+    elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
     new JoystickButton(controller, 1).whileTrue(new MecherFunil(pivotFunil,1));
     new JoystickButton(controller, 2).whileTrue(new MecherFunil(pivotFunil, -1));
     new JoystickButton(controller, 3).whileTrue(new ClimberComm(climber, controller, 0.5));
     new JoystickButton(controller, 4).whileTrue(new ClimberComm(climber, controller, -0.5));
-    new JoystickButton(controller, 5).onTrue(new ElevatorPID(elevador,  0));
-    new JoystickButton(controller, 6).onTrue(new ElevatorPID(elevador, 1));
+    new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  0));
+    new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 1));
   }
 
   public Command getAutonomousCommand() {

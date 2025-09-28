@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -13,6 +14,17 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -23,12 +35,37 @@ public class XDrive extends SubsystemBase {
     private SparkMax rb = new SparkMax(4, MotorType.kBrushless);
     private SparkMax lb = new SparkMax(3, MotorType.kBrushless);
 
+    private RelativeEncoder lfEncoder;
+    private RelativeEncoder rfEncoder;
+    private RelativeEncoder rbEncoder;
+    private RelativeEncoder lbEncoder;
+
     AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
     double FL = 0;
     double FR = 0;
     double BL = 0;
     double BR = 0;
+
+    double X = 0;
+    double Y = 0;
+    double R = 0;
+
+    Field2d field = new Field2d();
+
+    MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
+        new Translation2d(-0.25, 0.25),
+        new Translation2d(0.25, 0.25),
+        new Translation2d(-0.25, -0.25),
+        new Translation2d(0.25, -0.25));
+    MecanumDrivePoseEstimator poseEstimator = new MecanumDrivePoseEstimator(
+        kinematics,
+        new Rotation2d(),
+        new MecanumDriveWheelPositions(),
+        new Pose2d()
+    );
+
+    VisionSystem visionSystem = new VisionSystem();
 
     double lerp(double a, double b, double f)  {
         return a + f * (b - a);
@@ -60,11 +97,17 @@ public class XDrive extends SubsystemBase {
         lbconfig.disableFollowerMode();
         lb.configure(lbconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
+        lfEncoder = lf.getEncoder();
+        rfEncoder = rf.getEncoder();
+        lbEncoder = lb.getEncoder();
+        rbEncoder = rb.getEncoder();
 
+        SmartDashboard.putData("field", field);
     }
 
     public void drive(double y, double x, double r) {
         double botHeading = -Math.toRadians(gyro.getAngle());
+        
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
         rotX *= 1.1;
@@ -81,12 +124,28 @@ public class XDrive extends SubsystemBase {
         rf.set(FR);
         lb.set(BL);
         rb.set(BR);
+        
+        
+        // X = lerp(X, x, 0.1);
+        // Y = lerp(Y, y, 0.1);
+        // R = lerp(R, r, 0.1);
+        // mecDrive.setMaxOutput(0.7);
+        // mecDrive.driveCartesian(Y, X, R, new Rotation2d(-botHeading));
     }
 
-    public void periodic(){
-            
-    SmartDashboard.putNumber("gyro", gyro.getAngle());
-    
-    
-        }
+    public double ticksToMeter(double ticks){
+        // return ticks;
+        return ticks * (Units.inchesToMeters(6)*Math.PI) / 14.75;
+    }
+
+    public void periodic(){   
+        SmartDashboard.putNumber("gyro", gyro.getAngle());
+        visionSystem.getEstimatedPose().ifPresent(pose -> {
+            poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
+        });
+        field.setRobotPose(
+            poseEstimator.update(new Rotation2d(Units.degreesToRadians(-gyro.getAngle())),
+            new MecanumDriveWheelPositions(ticksToMeter(lfEncoder.getPosition()), ticksToMeter(rfEncoder.getPosition()), ticksToMeter(lbEncoder.getPosition()), ticksToMeter(rbEncoder.getPosition())))
+        );
+    }
 }

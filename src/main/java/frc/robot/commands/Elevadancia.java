@@ -32,17 +32,14 @@ public class Elevadancia extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(controller.getPOV() == 0)
-      elevador.levantagem(-0.7);
-    else if(controller.getPOV() == 180)
-      elevador.levantagem(0.5);
-    else
-      elevador.levantagem(0);
+    elevador.levantagem(controller.getY()*0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    elevador.levantagem(0);
+  }
 
   // Returns true when the command should end.
   @Override

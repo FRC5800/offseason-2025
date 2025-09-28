@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevadorConstants;
 
@@ -36,8 +37,8 @@ public class Elevador extends SubsystemBase {
     private static final double REDUCTION = 5.14;
     private static final double CARRIAGE_MASS = 12.54956;
     private static final double DRUM_RADIUS = 0.01429;
-    private static final double MIN_HEIGHT = 0.93980;
-    private static final double MAX_HEIGHT = 1.97174;
+    private static final double MIN_HEIGHT = 5;
+    private static final double MAX_HEIGHT = 100;
     private static final double FIRST_STATE = 0.93980;
     private static final double SECOND_STATE = 1.77765;
     private static final double THIRD_STATE = 1.97174;
@@ -51,7 +52,7 @@ public class Elevador extends SubsystemBase {
     private RelativeEncoder slaveEncoder;
 
     // Controllers (temporary constants)
-    public PIDController pidControllerElevador = new PIDController(13, 2.5, 0.3);
+    public PIDController pidControllerElevador = new PIDController(0.5, 0, 0);
     // Canva mechanism
     private Mechanism2d elevatorMech = new Mechanism2d(3, 3);
     private MechanismRoot2d elevatorRoot = elevatorMech.getRoot("Elevator root", 1.5, 0);
@@ -83,6 +84,9 @@ public class Elevador extends SubsystemBase {
     private StructArrayPublisher<Pose3d> tempPose02 = NetworkTableInstance.getDefault().getStructArrayTopic("Temp 02", Pose3d.struct).publish();
 
     public Elevador() {
+        pidControllerElevador.setTolerance(1);
+
+        SmartDashboard.putData("reset elevator encoders", new InstantCommand(() -> {masterEncoder.setPosition(0); slaveEncoder.setPosition(0);}));
         // Configure controllers
         var motorMasterConfig = new SparkMaxConfig(); // Creates a object of SparkMaxConfig
         // motorMasterConfig.smartCurrentLimit(80); // Set max current in Ampers
@@ -111,6 +115,11 @@ public class Elevador extends SubsystemBase {
     public void periodic() {
     // This method will be called once per scheduler run
         SmartDashboard.putNumber("Elevator Height", getHeight());
+        SmartDashboard.putNumber("left elevator", ticksToMeters(masterEncoder.getPosition()));
+        SmartDashboard.putNumber("right elevator", ticksToMeters(slaveEncoder.getPosition()));
+        SmartDashboard.putNumber("left elevator motor", elevatorMaster.get());
+        SmartDashboard.putNumber("right elevator motor", elevatorSlave.get());
+        SmartDashboard.putBoolean("in the setpoint", pidControllerElevador.atSetpoint());
     }
 
     @Override
@@ -149,10 +158,12 @@ public class Elevador extends SubsystemBase {
     public void elevatorPIDMove(int target) {
         switch (target) {
             case 0:
-                elevatorMaster.set(pidControllerElevador.calculate(getHeight(), ElevadorConstants.EV_POS_INICIAL));
+                elevatorMaster.set(MathUtil.clamp((-pidControllerElevador.calculate(getHeight(), MIN_HEIGHT)), -0.25, 0.25));
+                elevatorSlave.set(MathUtil.clamp((pidControllerElevador.calculate(getHeight(), MIN_HEIGHT)), -0.25, 0.25));
                 break;
             case 1:
-                elevatorMaster.set(pidControllerElevador.calculate(getHeight(), ElevadorConstants.EV_POS_FINAL));
+                elevatorMaster.set(MathUtil.clamp((-pidControllerElevador.calculate(getHeight(), MAX_HEIGHT)), -0.25, 0.25));
+                elevatorSlave.set(MathUtil.clamp((pidControllerElevador.calculate(getHeight(), MAX_HEIGHT)), -0.25, 0.25));
                 break;
             default:
                 break;
@@ -163,7 +174,7 @@ public class Elevador extends SubsystemBase {
     public double getHeight() {
         if(RobotBase.isSimulation())
             return elevatorSim.getPositionMeters();
-        return ticksToMeters(masterEncoder.getPosition());
+        return (ticksToMeters(masterEncoder.getPosition()) + -ticksToMeters(slaveEncoder.getPosition()))/2;
     }
 
     public boolean inPosition() {
@@ -172,7 +183,7 @@ public class Elevador extends SubsystemBase {
 
     // convert encoder ticks to meters
     public double ticksToMeters(double ticks) {
-        return (ticks/49) * 0.7950125000000001;
+        return ticks * 0.7950125000000001 * 5.14;
     }
 }
 
