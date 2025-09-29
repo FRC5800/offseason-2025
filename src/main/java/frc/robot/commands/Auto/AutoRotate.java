@@ -4,8 +4,12 @@
 
 package frc.robot.commands.Auto;
 
+import java.lang.annotation.Target;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.XDrive;
 
@@ -14,6 +18,7 @@ public class AutoRotate extends Command {
   XDrive xDrive;
   int idTarget;
   double angle;
+  boolean estage;
 
   /** Creates a new AutoRotate. */
   public AutoRotate(XDrive xDrive, int idTarget) {
@@ -26,9 +31,16 @@ public class AutoRotate extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    estage = idTarget == 1 || idTarget == 2;
+
+    var alliance = DriverStation.getAlliance().orElse(Alliance.Red);
+    if (alliance == DriverStation.Alliance.Blue)
+      idTarget += 11;
+    
     angle = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark).getTagPose(idTarget).get().toPose2d().getRotation().getDegrees();
-    if (idTarget == 1 || idTarget == 2)
+    if (estage)
       angle += 180;
+      
     xDrive.rotationController.setSetpoint(angle);
   }
 

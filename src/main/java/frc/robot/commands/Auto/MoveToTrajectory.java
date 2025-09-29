@@ -71,10 +71,6 @@ public class MoveToTrajectory extends Command {
     ChassisSpeeds chassisSpeeds = xDrive.controller.calculate(xDrive.getPose2d(), goal, Rotation2d.fromDegrees(70));
 
     MecanumDriveWheelSpeeds wheelSpeeds = xDrive.kinematics.toWheelSpeeds(chassisSpeeds);
-    xDrive.lfPidController.setSetpoint(wheelSpeeds.frontLeftMetersPerSecond);
-    xDrive.rfPidController.setSetpoint(wheelSpeeds.frontRightMetersPerSecond);
-    xDrive.lbPidController.setSetpoint(wheelSpeeds.rearLeftMetersPerSecond);
-    xDrive.rbPidController.setSetpoint(wheelSpeeds.rearRightMetersPerSecond);
 
     xDrive.lf.set(wheelSpeeds.frontLeftMetersPerSecond/2);
     xDrive.rf.set(wheelSpeeds.frontRightMetersPerSecond/2);

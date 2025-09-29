@@ -4,7 +4,12 @@
 
 package frc.robot.commands.Auto;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.XDrive;
 
@@ -12,7 +17,7 @@ import frc.robot.subsystems.XDrive;
 public class AutoMove extends Command {
   XDrive xDrive;
   int idTarget;
-  Pose2d goal;
+  double distance;
 
   /** Creates a new AutoMove. */
   public AutoMove(XDrive xDrive, int idTarget) {
@@ -25,20 +30,25 @@ public class AutoMove extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    distance = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark).getTagPose(idTarget).get().toPose2d().transformBy(new Transform2d(new Translation2d(0.2, 0), new Rotation2d())).getTranslation().minus(xDrive.getPose2d().getTranslation()).getNorm();
+    xDrive.movementController.setSetpoint(distance);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    xDrive.autoDrive();;
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    xDrive.drive(0, 0, 0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return xDrive.movementController.atSetpoint();
   }
 }

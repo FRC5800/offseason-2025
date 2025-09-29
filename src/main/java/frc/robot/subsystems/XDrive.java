@@ -75,17 +75,16 @@ public class XDrive extends SubsystemBase {
         drive(0, 0, rotationController.calculate(gyro.getAngle()));
     }
 
+    public void autoDrive(){
+    }
+
     PIDController yController = new PIDController(0.02, 0, 0);
     PIDController xController = new PIDController(0.02, 0, 0);
     ProfiledPIDController rController = new ProfiledPIDController(1000, 0, 0, new TrapezoidProfile.Constraints(3, 1));
     public HolonomicDriveController controller = new HolonomicDriveController(xController, yController, rController);
 
     public PIDController rotationController = new PIDController(0.005, 0, 0);
-
-    public PIDController lfPidController = new PIDController(0.01, 0, 0);
-    public PIDController rfPidController = new PIDController(0.01, 0, 0);
-    public PIDController lbPidController = new PIDController(0.01, 0, 0);
-    public PIDController rbPidController = new PIDController(0.01, 0, 0);
+    public PIDController movementController = new PIDController(0.05, 0, 0);
 
     VisionSystem visionSystem = new VisionSystem();
 
@@ -126,6 +125,7 @@ public class XDrive extends SubsystemBase {
 
         SmartDashboard.putData("field", field);
         rotationController.setTolerance(1);
+        movementController.setTolerance(1);
     }
 
     public Pose2d getPose2d(){
