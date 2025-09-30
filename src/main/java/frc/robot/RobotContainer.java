@@ -33,7 +33,6 @@ import frc.robot.commands.MexerFunil;
 import frc.robot.commands.MoveOuttake;
 import frc.robot.commands.Auto.AutoMove;
 import frc.robot.commands.Auto.AutoRotate;
-import frc.robot.commands.Auto.MoveToTrajectory;
 import frc.robot.subsystems.PivotFunil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -57,22 +56,21 @@ public class RobotContainer {
 
   private void configureBindings() {
     xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
+    new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
+
     elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
     // new JoystickButton(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
     // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
     new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));
     new JoystickButton(controller02, 2).whileTrue(new ClimberComm(climber, -0.5));
-    new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));
     new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
-
-    new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 153));
-    new JoystickButton(controller, 1).onTrue(new AutoRotate(xDrive, 1));
-    new JoystickButton(controller, 2).onTrue(new AutoRotate(xDrive, 6));
-    new JoystickButton(controller, 3).onTrue(new MoveToTrajectory(xDrive, 1));    
-    new JoystickButton(controller, 4).onTrue(new MoveToTrajectory(xDrive, 6));    
-
-    // new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
+    new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));
+    new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 155));
+    // new JoystickButton(controller, 1).onTrue(new AutoRotate(xDrive, 1));
+    // new JoystickButton(controller, 2).onTrue(new AutoRotate(xDrive, 6));
+    // new JoystickButton(controller, 3).onTrue(new MoveToTrajectory(xDrive, 1));    
+    // new JoystickButton(controller, 4).onTrue(new MoveToTrajectory(xDrive, 6));    
   }
 
   

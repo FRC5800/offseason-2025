@@ -35,31 +35,29 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class XDrive extends SubsystemBase {
+    // Controllers
     public SparkMax lf = new SparkMax(1, MotorType.kBrushless);
     public SparkMax rf = new SparkMax(2, MotorType.kBrushless);
     public SparkMax rb = new SparkMax(4, MotorType.kBrushless);
     public SparkMax lb = new SparkMax(3, MotorType.kBrushless);
 
+    // Sensors
     public RelativeEncoder lfEncoder;
     public RelativeEncoder rfEncoder;
     public RelativeEncoder rbEncoder;
     public RelativeEncoder lbEncoder;
-
-    public boolean active = true;
-
     public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
+    // Modules speeds
     double FL = 0;
     double FR = 0;
     double BL = 0;
     double BR = 0;
 
-    double X = 0;
-    double Y = 0;
-    double R = 0;
-
+    // 2D field
     public Field2d field = new Field2d();
 
+    // Kinematics and pose estimators
     public MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
         new Translation2d(-0.25, 0.25),
         new Translation2d(0.25, 0.25),
@@ -72,30 +70,27 @@ public class XDrive extends SubsystemBase {
         new Pose2d()
     );
 
-    public void autoRotate(){
-        drive(0, 0, MathUtil.clamp(rotationController.calculate(gyro.getAngle()), -0.7, 0.7));
-    }
-
+    // PID and trajectory controllers
     PIDController yController = new PIDController(0.05, 0, 0);
     PIDController xController = new PIDController(1, 0, 0);
     ProfiledPIDController rController = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(3, 1));
     public HolonomicDriveController controller = new HolonomicDriveController(xController, yController, rController);
-
     public PIDController rotationController = new PIDController(0.0032, 0, 0);
     public PIDController movementController = new PIDController(0.05, 0, 0);
 
+    // Variables to define the velocity of the robot
     double maxSpeed = 0.7;
     boolean turbo = true;
 
-    VisionSystem visionSystem = new VisionSystem();
+    // VisionSystem visionSystem = new VisionSystem();
 
-    double lerp(double a, double b, double f)  {
-        return a + f * (b - a);
-    }
-
+    // Constructor
     public XDrive() {
+        // Reset gyro and poseEstimator
         poseEstimator.resetPose(new Pose2d());
         gyro.zeroYaw();
+
+        //Configuring controllers
         var lfconfig = new SparkMaxConfig();
         lfconfig.idleMode(IdleMode.kBrake);
         lfconfig.smartCurrentLimit(80);
@@ -120,14 +115,44 @@ public class XDrive extends SubsystemBase {
         lbconfig.disableFollowerMode();
         lb.configure(lbconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
+        // Configuring encoders
         lfEncoder = lf.getEncoder();
         rfEncoder = rf.getEncoder();
         lbEncoder = lb.getEncoder();
         rbEncoder = rb.getEncoder();
 
-        SmartDashboard.putData("field", field);
+        SmartDashboard.putData("field", field); // Put the field on the map
+
+        // Configuring PIDControllers
         rotationController.setTolerance(1);
         movementController.setTolerance(1);
+    }
+
+    public void periodic(){   
+        SmartDashboard.putNumber("Max speed", maxSpeed);
+        SmartDashboard.putNumber("Left front current", lf.getOutputCurrent());
+        SmartDashboard.putNumber("Right front current", rf.getOutputCurrent());
+        SmartDashboard.putNumber("Left back current", lb.getOutputCurrent());
+        SmartDashboard.putNumber("Right back current", rb.getOutputCurrent());
+        SmartDashboard.putNumber("gyro", gyro.getAngle());
+        SmartDashboard.putNumber("pidsetpoint", rotationController.getSetpoint());
+        // visionSystem.getEstimatedPose().ifPresent(pose -> {
+        //     poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
+        // });
+        field.setRobotPose(
+            poseEstimator.update(new Rotation2d(Units.degreesToRadians(-gyro.getAngle())),
+            new MecanumDriveWheelPositions(ticksToMeter(lfEncoder.getPosition()), ticksToMeter(rfEncoder.getPosition()), ticksToMeter(lbEncoder.getPosition()), ticksToMeter(rbEncoder.getPosition())))
+        );
+    }
+
+    // Method to make the drive more smooth
+    double lerp(double a, double b, double f)  {
+        return a + f * (b - a);
+    }
+
+    // Method to rotate in its own axis with pid
+    public void autoRotate(){
+        drive(0, 0, MathUtil.clamp(rotationController.calculate(gyro.getAngle()), -0.7, 0.7));
     }
 
     public void switchSpeed(){
@@ -175,34 +200,10 @@ public class XDrive extends SubsystemBase {
         rf.set(FR);
         lb.set(BL);
         rb.set(BR);
-        
-        
-        // X = lerp(X, x, 0.1);
-        // Y = lerp(Y, y, 0.1);
-        // R = lerp(R, r, 0.1);
-        // mecDrive.setMaxOutput(0.7);
-        // mecDrive.driveCartesian(Y, X, R, new Rotation2d(-botHeading));
     }
 
     public double ticksToMeter(double ticks){
         // return ticks;
         return ticks * (Units.inchesToMeters(6)*Math.PI) / 14.75;
-    }
-
-    public void periodic(){   
-        SmartDashboard.putNumber("Max speed", maxSpeed);
-        SmartDashboard.putNumber("Left front current", lf.getOutputCurrent());
-        SmartDashboard.putNumber("Right front current", rf.getOutputCurrent());
-        SmartDashboard.putNumber("Left back current", lb.getOutputCurrent());
-        SmartDashboard.putNumber("Right back current", rb.getOutputCurrent());
-        SmartDashboard.putNumber("gyro", gyro.getAngle());
-        SmartDashboard.putNumber("pidsetpoint", rotationController.getSetpoint());
-        visionSystem.getEstimatedPose().ifPresent(pose -> {
-            poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
-        });
-        field.setRobotPose(
-            poseEstimator.update(new Rotation2d(Units.degreesToRadians(-gyro.getAngle())),
-            new MecanumDriveWheelPositions(ticksToMeter(lfEncoder.getPosition()), ticksToMeter(rfEncoder.getPosition()), ticksToMeter(lbEncoder.getPosition()), ticksToMeter(rbEncoder.getPosition())))
-        );
     }
 }

@@ -37,7 +37,7 @@ public class AutoRotate extends Command {
     if (alliance == DriverStation.Alliance.Blue)
       idTarget += 11;
     
-    angle = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark).getTagPose(idTarget).get().toPose2d().getRotation().getDegrees();
+    angle = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark).getTagPose(idTarget).get().toPose2d().getRotation().getDegrees()-180-xDrive.getPose2d().getRotation().getDegrees();
     if (estage)
       angle += 180;
       
