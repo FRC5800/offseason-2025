@@ -12,6 +12,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
@@ -51,8 +52,10 @@ public class MoveToTrajectory extends Command {
     trajectory = TrajectoryGenerator.generateTrajectory(
       xDrive.getPose2d(),
       List.of(),
-      //AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark).getTagPose(idTarget).get().toPose2d(),
-      xDrive.getPose2d().transformBy(new Transform2d(0, -2, new Rotation2d(Math.PI))),
+      new Pose2d(AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark).getTagPose(idTarget).get().getTranslation().toTranslation2d(), xDrive.getPose2d().getRotation()),
+      // new Pose2d(new Translation2d(xDrive.getPose2d().getX()+2, xDrive.getPose2d().getY()+1), xDrive.getPose2d().getRotation()),
+      // AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark).getTagPose(idTarget).get().toPose2d(),
+      // xDrive.getPose2d().transformBy(new Transform2d(0, -2, new Rotation2d(Math.PI))),
       new TrajectoryConfig(maxSpeed, maxAcceleration)
     );
 
@@ -72,10 +75,10 @@ public class MoveToTrajectory extends Command {
 
     MecanumDriveWheelSpeeds wheelSpeeds = xDrive.kinematics.toWheelSpeeds(chassisSpeeds);
 
-    xDrive.lf.set(wheelSpeeds.frontLeftMetersPerSecond/2);
-    xDrive.rf.set(wheelSpeeds.frontRightMetersPerSecond/2);
-    xDrive.lb.set(wheelSpeeds.rearLeftMetersPerSecond/2);
-    xDrive.rb.set(wheelSpeeds.rearRightMetersPerSecond/2);
+    xDrive.lf.set(wheelSpeeds.frontLeftMetersPerSecond/4.25);
+    xDrive.rf.set(wheelSpeeds.frontRightMetersPerSecond/4.25);
+    xDrive.lb.set(wheelSpeeds.rearLeftMetersPerSecond/4.25);
+    xDrive.rb.set(wheelSpeeds.rearRightMetersPerSecond/4.25);
 
     // xDrive.lf.set(xDrive.lfPidController.calculate(xDrive.lfEncoder.getVelocity() * 60 * Math.PI * Units.inchesToMeters(6)));
     // xDrive.rf.set(xDrive.rfPidController.calculate(xDrive.rfEncoder.getVelocity() * 60 * Math.PI * Units.inchesToMeters(6)));

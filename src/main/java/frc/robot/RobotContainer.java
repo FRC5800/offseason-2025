@@ -17,6 +17,7 @@ import frc.robot.subsystems.Elevador;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -28,9 +29,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.MecherFunil;
+import frc.robot.commands.MexerFunil;
 import frc.robot.commands.MoveOuttake;
+import frc.robot.commands.Auto.AutoMove;
 import frc.robot.commands.Auto.AutoRotate;
+import frc.robot.commands.Auto.MoveToTrajectory;
 import frc.robot.subsystems.PivotFunil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,7 +44,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   private XDrive xDrive = new XDrive();
   private Joystick controller = new Joystick(0);
-  private Joystick controller02 = new Joystick(1);
+  private PS4Controller controller02 = new PS4Controller(1);
   private Climber climber = new Climber();
   private Elevador elevador = new Elevador();
   private PivotFunil pivotFunil = new PivotFunil();
@@ -55,17 +58,21 @@ public class RobotContainer {
   private void configureBindings() {
     xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
     elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
-    //new JoystickButton(controller, 1).whileTrue(new MecherFunil(pivotFunil,1));
-    //new JoystickButton(controller, 2).whileTrue(new MecherFunil(pivotFunil, -1));
+    // new JoystickButton(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
+    // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
     new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));
     new JoystickButton(controller02, 2).whileTrue(new ClimberComm(climber, -0.5));
-    new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  5));
-    // new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.75));
+    new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));
+    new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
 
-    new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 150));
+    new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 153));
     new JoystickButton(controller, 1).onTrue(new AutoRotate(xDrive, 1));
     new JoystickButton(controller, 2).onTrue(new AutoRotate(xDrive, 6));
+    new JoystickButton(controller, 3).onTrue(new MoveToTrajectory(xDrive, 1));    
+    new JoystickButton(controller, 4).onTrue(new MoveToTrajectory(xDrive, 6));    
+
+    // new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
   }
 
   

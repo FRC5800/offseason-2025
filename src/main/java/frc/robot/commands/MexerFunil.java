@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.PivotFunil;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class MecherFunil extends Command {
+public class MexerFunil extends Command {
   private PivotFunil pivotFunil;
   private double speed;
 
-  /** Creates a new mecherFunil. */
-  public MecherFunil(PivotFunil pivotFunil, double speed) {
+  /** Creates a new mexerFunil. */
+  public MexerFunil(PivotFunil pivotFunil, double speed) {
     this.pivotFunil = pivotFunil;
     this.speed = speed;
     addRequirements(pivotFunil);

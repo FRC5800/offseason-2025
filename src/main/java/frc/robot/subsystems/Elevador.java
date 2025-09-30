@@ -43,6 +43,8 @@ public class Elevador extends SubsystemBase {
     private static final double SECOND_STATE = 1.77765;
     private static final double THIRD_STATE = 1.97174;
 
+    public boolean ePID = true;
+
     // Motors controllers
     private SparkMax elevatorMaster = new SparkMax(LEAD_ID, MotorType.kBrushless);
     private SparkMax elevatorSlave = new SparkMax(FOLLOWER_ID, MotorType.kBrushless);
@@ -85,6 +87,7 @@ public class Elevador extends SubsystemBase {
     // private StructArrayPublisher<Pose3d> tempPose02 = NetworkTableInstance.getDefault().getStructArrayTopic("Temp 02", Pose3d.struct).publish();
 
     public Elevador() {
+
         SmartDashboard.putString("Rodou?", "Não");
         SmartDashboard.putNumber("Target", -1);
         pidControllerElevador.setTolerance(0.5);
@@ -116,6 +119,7 @@ public class Elevador extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // if(ePID)
         // elevatorPIDMove(target);
     // This method will be called once per scheduler run
         SmartDashboard.putNumber("Elevator Height", getHeight());
@@ -168,7 +172,7 @@ public class Elevador extends SubsystemBase {
         SmartDashboard.putNumber("Target", target);
 
         pidControllerElevador.setSetpoint(target);
-        double speed = MathUtil.clamp(pidControllerElevador.calculate(getHeight()), -0.15, 0.20);
+        double speed = MathUtil.clamp(pidControllerElevador.calculate(getHeight()), -0.15, 0.30);
 
         elevatorMaster.set(speed);
         elevatorSlave.set(-speed);

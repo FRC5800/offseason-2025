@@ -10,14 +10,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Elevador;
+import frc.robot.subsystems.XDrive;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Elevadancia extends Command {
-  Joystick controller;
+  PS4Controller controller;
   Elevador elevador;
 
   /** Creates a new elevadancia. */
-  public Elevadancia(Elevador elevador, Joystick controller) {
+  public Elevadancia(Elevador elevador, PS4Controller controller) {
     this.elevador = elevador;
     this.controller = controller;
     addRequirements(elevador);
@@ -32,7 +33,11 @@ public class Elevadancia extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevador.levantagem(controller.getY()*0.5);
+    // if(Math.abs(controller.getY())>0.2)
+    //   elevador.ePID = false;
+    // else
+    //   elevador.ePID = true;
+    elevador.levantagem(controller.getLeftY()*0.8);
   }
 
   // Called once the command ends or is interrupted.

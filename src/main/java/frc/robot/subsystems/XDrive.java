@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -72,19 +73,19 @@ public class XDrive extends SubsystemBase {
     );
 
     public void autoRotate(){
-        drive(0, 0, rotationController.calculate(gyro.getAngle()));
+        drive(0, 0, MathUtil.clamp(rotationController.calculate(gyro.getAngle()), -0.7, 0.7));
     }
 
-    public void autoDrive(){
-    }
-
-    PIDController yController = new PIDController(0.02, 0, 0);
-    PIDController xController = new PIDController(0.02, 0, 0);
-    ProfiledPIDController rController = new ProfiledPIDController(1000, 0, 0, new TrapezoidProfile.Constraints(3, 1));
+    PIDController yController = new PIDController(0.05, 0, 0);
+    PIDController xController = new PIDController(1, 0, 0);
+    ProfiledPIDController rController = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(3, 1));
     public HolonomicDriveController controller = new HolonomicDriveController(xController, yController, rController);
 
-    public PIDController rotationController = new PIDController(0.0005, 0, 0);
+    public PIDController rotationController = new PIDController(0.0032, 0, 0);
     public PIDController movementController = new PIDController(0.05, 0, 0);
+
+    double maxSpeed = 0.7;
+    boolean turbo = true;
 
     VisionSystem visionSystem = new VisionSystem();
 
@@ -93,6 +94,7 @@ public class XDrive extends SubsystemBase {
     }
 
     public XDrive() {
+        poseEstimator.resetPose(new Pose2d());
         gyro.zeroYaw();
         var lfconfig = new SparkMaxConfig();
         lfconfig.idleMode(IdleMode.kBrake);
@@ -128,6 +130,16 @@ public class XDrive extends SubsystemBase {
         movementController.setTolerance(1);
     }
 
+    public void switchSpeed(){
+        if(turbo){
+            maxSpeed = 0.2;
+            turbo = false;
+        } else {
+            maxSpeed = 0.7;
+            turbo = true;
+        }
+    }
+
     public Pose2d getPose2d(){
         return poseEstimator.getEstimatedPosition();
     }
@@ -147,10 +159,10 @@ public class XDrive extends SubsystemBase {
         double omega = r;
 
         double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(r), 1);
-        FL = lerp(FL, ((rotY + rotX + omega) / denominator) * 0.7, 0.1);
-        FR = lerp(FR, ((rotY - rotX - omega) / denominator) * 0.7, 0.1);
-        BL = lerp(BL, ((rotY - rotX + omega) / denominator) * 0.7, 0.1);
-        BR = lerp(BR, ((rotY + rotX - omega) / denominator) * 0.7, 0.1);
+        FL = lerp(FL, ((rotY + rotX + omega) / denominator) * maxSpeed, 0.1);
+        FR = lerp(FR, ((rotY - rotX - omega) / denominator) * maxSpeed, 0.1);
+        BL = lerp(BL, ((rotY - rotX + omega) / denominator) * maxSpeed, 0.1);
+        BR = lerp(BR, ((rotY + rotX - omega) / denominator) * maxSpeed, 0.1);
 
         // double denominator = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(r), 1);
         // FL = lerp(FL, ((y + x + omega) / denominator) * 0.7, 0.1);
@@ -178,6 +190,7 @@ public class XDrive extends SubsystemBase {
     }
 
     public void periodic(){   
+        SmartDashboard.putNumber("Max speed", maxSpeed);
         SmartDashboard.putNumber("Left front current", lf.getOutputCurrent());
         SmartDashboard.putNumber("Right front current", rf.getOutputCurrent());
         SmartDashboard.putNumber("Left back current", lb.getOutputCurrent());
