@@ -14,14 +14,12 @@ import frc.robot.subsystems.Climber;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ClimberComm extends Command {
   private Climber climber;
-  Joystick controle;
   private double speed;
 
   /** Creates a new ClimberComm. */
-  public ClimberComm(Climber climber, Joystick controle, double speed) {
+  public ClimberComm(Climber climber, double speed) {
     this.climber = climber;
     addRequirements(climber);
-    this.controle = controle;
     this.speed = speed;
   }
 

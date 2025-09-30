@@ -25,11 +25,15 @@ public class MoveOuttake extends Command {
 
   @Override
   public void execute() {
+    outtake.run(speed);
+
   //atribuindo o método que define a velocidade
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    outtake.run(0);
+  }
 
   @Override
   public boolean isFinished() {

@@ -116,7 +116,7 @@ public class Elevador extends SubsystemBase {
 
     @Override
     public void periodic() {
-        elevatorPIDMove(target);
+        // elevatorPIDMove(target);
     // This method will be called once per scheduler run
         SmartDashboard.putNumber("Elevator Height", getHeight());
         // SmartDashboard.putNumber("left elevator", ticksToMeters(masterEncoder.getPosition()));
@@ -168,7 +168,7 @@ public class Elevador extends SubsystemBase {
         SmartDashboard.putNumber("Target", target);
 
         pidControllerElevador.setSetpoint(target);
-        double speed = MathUtil.clamp(pidControllerElevador.calculate(getHeight()), -0.25, 0.25);
+        double speed = MathUtil.clamp(pidControllerElevador.calculate(getHeight()), -0.15, 0.20);
 
         elevatorMaster.set(speed);
         elevatorSlave.set(-speed);

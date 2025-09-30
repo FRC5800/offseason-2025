@@ -83,7 +83,7 @@ public class XDrive extends SubsystemBase {
     ProfiledPIDController rController = new ProfiledPIDController(1000, 0, 0, new TrapezoidProfile.Constraints(3, 1));
     public HolonomicDriveController controller = new HolonomicDriveController(xController, yController, rController);
 
-    public PIDController rotationController = new PIDController(0.005, 0, 0);
+    public PIDController rotationController = new PIDController(0.0005, 0, 0);
     public PIDController movementController = new PIDController(0.05, 0, 0);
 
     VisionSystem visionSystem = new VisionSystem();
@@ -152,6 +152,12 @@ public class XDrive extends SubsystemBase {
         BL = lerp(BL, ((rotY - rotX + omega) / denominator) * 0.7, 0.1);
         BR = lerp(BR, ((rotY + rotX - omega) / denominator) * 0.7, 0.1);
 
+        // double denominator = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(r), 1);
+        // FL = lerp(FL, ((y + x + omega) / denominator) * 0.7, 0.1);
+        // FR = lerp(FR, ((y - x - omega) / denominator) * 0.7, 0.1);
+        // BL = lerp(BL, ((y - x + omega) / denominator) * 0.7, 0.1);
+        // BR = lerp(BR, ((y + x - omega) / denominator) * 0.7, 0.1);
+
         // Aplicando aos motores
         lf.set(FL);
         rf.set(FR);
@@ -172,7 +178,12 @@ public class XDrive extends SubsystemBase {
     }
 
     public void periodic(){   
+        SmartDashboard.putNumber("Left front current", lf.getOutputCurrent());
+        SmartDashboard.putNumber("Right front current", rf.getOutputCurrent());
+        SmartDashboard.putNumber("Left back current", lb.getOutputCurrent());
+        SmartDashboard.putNumber("Right back current", rb.getOutputCurrent());
         SmartDashboard.putNumber("gyro", gyro.getAngle());
+        SmartDashboard.putNumber("pidsetpoint", rotationController.getSetpoint());
         visionSystem.getEstimatedPose().ifPresent(pose -> {
             poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
         });
