@@ -58,7 +58,7 @@ public class AutoRotate extends Command {
             : 11;
 
         for (int i = 0; i < 6; i++) {
-            var t = coral_tags[i] + alliance_offset;
+            var t = reef_tags[i] + alliance_offset;
             reef_tag_poses.add(apriltag_map.getTagPose(t).get().toPose2d());
         }
 
