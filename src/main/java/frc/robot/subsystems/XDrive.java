@@ -169,7 +169,8 @@ public class XDrive extends SubsystemBase {
     }
 
     public Pose2d getPose2d(){
-        return poseEstimator.getEstimatedPosition();
+        //return poseEstimator.getEstimatedPosition();
+        return field.getRobotPose();
     }
 
     public void resetController(){
