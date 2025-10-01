@@ -4,11 +4,6 @@
 
 package frc.robot.commands.Auto;
 
-import java.lang.annotation.Target;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,71 +11,86 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.XDrive;
+import java.lang.annotation.Target;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AutoRotate extends Command {
-  XDrive xDrive;
-  int idTarget;
-  double angle;
-  boolean estage;
-  boolean closest;
-  // List<Pose2dProto> coral_tags = new List<Pose2dStruct>();
-  AprilTagFieldLayout apriltag_map = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
-  
-  /** Creates a new AutoRotate. */
-  public AutoRotate(XDrive xDrive, int idTarget, boolean closest) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.xDrive = xDrive;
-    this.idTarget = idTarget;
-    this.closest = closest;
-  
-    addRequirements(xDrive);
-  }
 
-  public int closest_coral(Pose2d pose){
-    int alliance_offset = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 0 : 11;
-    
-    // for(int i = 0; i < 6; i++){
-      // var t = coral_tags[i] + alliance_offset;
-      // apriltag_map.getTagPose(t).get().toPose2d().minus(pose).;
-    // }
+    XDrive xDrive;
+    int idTarget;
+    double angle;
+    boolean estage;
+    boolean closest;
+    // List<Pose2dProto> coral_tags = new List<Pose2dStruct>();
+    AprilTagFieldLayout apriltag_map = AprilTagFieldLayout.loadField(
+        AprilTagFields.k2025ReefscapeAndyMark
+    );
+    ArrayList<Pose2d> reef_tag_poses = new ArrayList<Pose2d>();
 
-    return 0;
-  }
+    /** Creates a new AutoRotate. */
+    public AutoRotate(XDrive xDrive, int idTarget, boolean closest) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.xDrive = xDrive;
+        this.idTarget = idTarget;
+        this.closest = closest;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    estage = idTarget == 1 || idTarget == 2;
+        addRequirements(xDrive);
+    }
 
-    
+    public Pose2d closest_coral(Pose2d pose) {
+        return pose.nearest(reef_tag_poses);
+    }
 
-    var alliance = DriverStation.getAlliance().orElse(Alliance.Red);
-    if (alliance == DriverStation.Alliance.Blue)
-      idTarget += 11;
-    
-    angle = apriltag_map.getTagPose(idTarget).get().toPose2d().getRotation().getDegrees();
-    if (estage)
-      angle += 180;
-      
-    xDrive.rotationController.setSetpoint(angle);
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        estage = idTarget == 1 || idTarget == 2;
+        int[] reef_tags = { 6, 7, 8, 9, 10, 11 };
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    xDrive.autoRotate();
-  }
+        int alliance_offset = DriverStation.getAlliance().orElse(
+                Alliance.Red
+            ) ==
+            Alliance.Red
+            ? 0
+            : 11;
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    xDrive.drive(0, 0, 0);
-  }
+        for (int i = 0; i < 6; i++) {
+            var t = coral_tags[i] + alliance_offset;
+            reef_tag_poses.add(apriltag_map.getTagPose(t).get().toPose2d());
+        }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return xDrive.rotationController.atSetpoint();
-  }
+        var alliance = DriverStation.getAlliance().orElse(Alliance.Red);
+        if (alliance == DriverStation.Alliance.Blue) idTarget += 11;
+
+        angle = apriltag_map
+            .getTagPose(idTarget)
+            .get()
+            .toPose2d()
+            .getRotation()
+            .getDegrees();
+        if (estage) angle += 180;
+
+        xDrive.rotationController.setSetpoint(angle);
+    }
+
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        xDrive.autoRotate();
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        xDrive.drive(0, 0, 0);
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return xDrive.rotationController.atSetpoint();
+    }
 }
