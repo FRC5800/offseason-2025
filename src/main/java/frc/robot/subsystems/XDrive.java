@@ -137,7 +137,7 @@ public class XDrive extends SubsystemBase {
         SmartDashboard.putNumber("Left back current", lb.getOutputCurrent());
         SmartDashboard.putNumber("Right back current", rb.getOutputCurrent());
         SmartDashboard.putNumber("gyro", gyro.getAngle());
-        SmartDashboard.putNumber("pidsetpoint", rotationController.getSetpoint());
+        SmartDashboard.putNumber("PID Rotation", rotationController.getSetpoint());
         visionSystem.getEstimatedPose().ifPresent(pose -> {
             poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
         });
