@@ -6,20 +6,23 @@ package frc.robot.commands.Auto;
 
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.Outtake;
+import frc.robot.subsystems.XDrive;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
 public class Autonomous_time extends SequentialCommandGroup {
-
   
-  
-  
-  public Autonomous_time() {
-
-
+  public Autonomous_time(XDrive xdrive, Outtake outtake) {
     
-    addCommands();
+    addCommands( 
+      new Drivetimer(null, 3.2),
+      new outtake_time(outtake, 2)
+
+
+    );
+
   }
 }
