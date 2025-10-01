@@ -42,7 +42,9 @@ public class AutoRotate extends Command {
     public void initialize() {
         int[] reef_tags = { 6, 7, 8, 9, 10, 11 };
 
-        int alliance_offset = DriverStation.getAlliance().map(a -> a == Alliance.Red ? 0 : 11).orElse(0);
+        int alliance_offset = DriverStation.getAlliance()
+            .map(a -> a == Alliance.Red ? 0 : 11)
+            .orElse(0);
 
         for (int i = 0; i < 6; i++) {
             var t = reef_tags[i] + alliance_offset;
