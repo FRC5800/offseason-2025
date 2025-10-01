@@ -59,14 +59,21 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
+    xDrive.setDefaultCommand(new RunCommand(() -> {
+      xDrive.drive(-controller.getY(), controller.getX(), controller.getZ());
+
+      if(controller.getPOV() == 270)
+        xDrive.driveRelative(0, -0.2, 0);
+      else if(controller.getPOV() == 90)
+        xDrive.driveRelative(0, 0.2, 0);
+    }, xDrive));
     new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
 
     
     height = SmartDashboard.getNumber("Altura do Elevador", 150);
 
     // elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
-    elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
+    // elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
     // new JoystickButt%on(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
     // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
     // new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));
