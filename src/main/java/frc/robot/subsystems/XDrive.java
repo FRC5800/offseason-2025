@@ -179,7 +179,7 @@ public class XDrive extends SubsystemBase {
     public void drive(double y, double x, double r) {
         if(!isActive)
             return;
-        double botHeading = -Math.toRadians(gyro.getAngle());
+        double botHeading = -Math.toRadians(gyro.getAngle() + 180);
         
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);

@@ -34,6 +34,7 @@ import frc.robot.commands.MexerFunil;
 import frc.robot.commands.MoveOuttake;
 import frc.robot.commands.Auto.AutoMove;
 import frc.robot.commands.Auto.AutoRotate;
+import frc.robot.commands.Auto.Autonomous_time;
 import frc.robot.commands.Auto.Drivetimer;
 import frc.robot.subsystems.PivotFunil;
 import edu.wpi.first.wpilibj.Joystick;
@@ -45,7 +46,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   private XDrive xDrive = new XDrive();
   private Joystick controller = new Joystick(0);
-  private PS4Controller controller02 = new PS4Controller(1);
+  private Joystick controller02 = new Joystick(1);
   // private Climber climber = new Climber();
   private Elevador elevador = new Elevador();
   private PivotFunil pivotFunil = new PivotFunil();
@@ -64,17 +65,17 @@ public class RobotContainer {
     
     height = SmartDashboard.getNumber("Altura do Elevador", 150);
 
-    // elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
-    elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
+    elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
+    // elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
     // new JoystickButt%on(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
     // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
     // new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));
     // new JoystickButton(controller02, 2).whileTrue(new ClimberComm(climber, -0.5));
-    new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));
+    new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));;
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
     // new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));
     // new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 155));
-    new JoystickButton(controller, 1).whileTrue(new AutoRotate(xDrive, true));
+    // new JoystickButton(controller, 1).whileTrue(new AutoRotate(xDrive, true));
     // new JoystickButton(controller, 3).onTrue(new MoveToTrajectory(xDrive, 1));    
     // new JoystickButton(controller, 4).onTrue(new MoveToTrajectory(xDrive, 6));    
   }
@@ -83,6 +84,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     //return new Drivetimer(xDrive, 2);
     // An example command will be run in autonomous
-    return null;
+    return new Autonomous_time(xDrive, outtake);
   }
 }

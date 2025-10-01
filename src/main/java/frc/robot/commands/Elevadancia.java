@@ -14,11 +14,11 @@ import frc.robot.subsystems.XDrive;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Elevadancia extends Command {
-  PS4Controller controller;
+  Joystick controller;
   Elevador elevador;
 
   /** Creates a new elevadancia. */
-  public Elevadancia(Elevador elevador, PS4Controller controller) {
+  public Elevadancia(Elevador elevador, Joystick controller) {
     this.elevador = elevador;
     this.controller = controller;
     addRequirements(elevador);
@@ -37,7 +37,7 @@ public class Elevadancia extends Command {
     //   elevador.ePID = false;
     // else
     //   elevador.ePID = true;
-    elevador.levantagem(controller.getLeftY()*0.3);
+    elevador.levantagem(controller.getY()*0.50);
   }
 
   // Called once the command ends or is interrupted.

@@ -18,7 +18,7 @@ public class Autonomous_time extends SequentialCommandGroup {
   public Autonomous_time(XDrive xdrive, Outtake outtake) {
     
     addCommands( 
-      new Drivetimer(null, 3.2),
+      new Drivetimer(xdrive, 3.2),
       new outtake_time(outtake, 2)
 
 
