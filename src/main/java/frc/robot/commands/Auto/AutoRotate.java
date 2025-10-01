@@ -5,9 +5,13 @@
 package frc.robot.commands.Auto;
 
 import java.lang.annotation.Target;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,13 +23,29 @@ public class AutoRotate extends Command {
   int idTarget;
   double angle;
   boolean estage;
-
+  boolean closest;
+  // List<Pose2dProto> coral_tags = new List<Pose2dStruct>();
+  AprilTagFieldLayout apriltag_map = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+  
   /** Creates a new AutoRotate. */
-  public AutoRotate(XDrive xDrive, int idTarget) {
+  public AutoRotate(XDrive xDrive, int idTarget, boolean closest) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.xDrive = xDrive;
     this.idTarget = idTarget;
+    this.closest = closest;
+  
     addRequirements(xDrive);
+  }
+
+  public int closest_coral(Pose2d pose){
+    int alliance_offset = DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Red ? 0 : 11;
+    
+    // for(int i = 0; i < 6; i++){
+      // var t = coral_tags[i] + alliance_offset;
+      // apriltag_map.getTagPose(t).get().toPose2d().minus(pose).;
+    // }
+
+    return 0;
   }
 
   // Called when the command is initially scheduled.
@@ -33,11 +53,13 @@ public class AutoRotate extends Command {
   public void initialize() {
     estage = idTarget == 1 || idTarget == 2;
 
+    
+
     var alliance = DriverStation.getAlliance().orElse(Alliance.Red);
     if (alliance == DriverStation.Alliance.Blue)
       idTarget += 11;
     
-    angle = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark).getTagPose(idTarget).get().toPose2d().getRotation().getDegrees()-180-xDrive.getPose2d().getRotation().getDegrees();
+    angle = apriltag_map.getTagPose(idTarget).get().toPose2d().getRotation().getDegrees();
     if (estage)
       angle += 180;
       

@@ -14,11 +14,13 @@ import frc.robot.subsystems.Elevador;
 public class ElevatorPID extends Command {
   /** Creates a new ElevatorPID. */
   Elevador elevador;
+  PS4Controller controller;
   double target;
 
-  public ElevatorPID(Elevador elevador, double target) {
+  public ElevatorPID(Elevador elevador, PS4Controller controller, double target) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.elevador = elevador;
+    this.controller = controller;
     this.target = target;
     addRequirements(elevador);
   }
@@ -31,7 +33,15 @@ public class ElevatorPID extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevador.setTarget(target);
+    // elevador.setTarget(target);
+    if(controller.getPOV() == 0)
+      elevador.setTarget(160);
+    else if(controller.getPOV() == 180)
+      elevador.setTarget(5);
+    else if(controller.getPOV() == 270)
+      elevador.setTarget(75);
+    else if(controller.getPOV() == 90)
+      elevador.setTarget(125);
   }
 
   // Called once the command ends or is interrupted.

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -47,6 +48,9 @@ public class XDrive extends SubsystemBase {
     public RelativeEncoder rbEncoder;
     public RelativeEncoder lbEncoder;
     public AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+    // public PigeonIMU pigeonIMU = new PigeonIMU(10);
+    VisionSystem visionSystem = new VisionSystem();
+    public boolean isActive = true;
 
     // Modules speeds
     double FL = 0;
@@ -82,13 +86,11 @@ public class XDrive extends SubsystemBase {
     double maxSpeed = 0.7;
     boolean turbo = true;
 
-    // VisionSystem visionSystem = new VisionSystem();
-
     // Constructor
     public XDrive() {
         // Reset gyro and poseEstimator
         poseEstimator.resetPose(new Pose2d());
-        gyro.zeroYaw();
+        gyro.reset();
 
         //Configuring controllers
         var lfconfig = new SparkMaxConfig();
@@ -136,11 +138,11 @@ public class XDrive extends SubsystemBase {
         SmartDashboard.putNumber("Right back current", rb.getOutputCurrent());
         SmartDashboard.putNumber("gyro", gyro.getAngle());
         SmartDashboard.putNumber("pidsetpoint", rotationController.getSetpoint());
-        // visionSystem.getEstimatedPose().ifPresent(pose -> {
-        //     poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
-        // });
+        visionSystem.getEstimatedPose().ifPresent(pose -> {
+            poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
+        });
         field.setRobotPose(
-            poseEstimator.update(new Rotation2d(Units.degreesToRadians(-gyro.getAngle())),
+            poseEstimator.update(new Rotation2d(Units.degreesToRadians(gyro.getAngle())),
             new MecanumDriveWheelPositions(ticksToMeter(lfEncoder.getPosition()), ticksToMeter(rfEncoder.getPosition()), ticksToMeter(lbEncoder.getPosition()), ticksToMeter(rbEncoder.getPosition())))
         );
     }
@@ -174,7 +176,7 @@ public class XDrive extends SubsystemBase {
     }
 
     public void drive(double y, double x, double r) {
-        if(!active)
+        if(!isActive)
             return;
         double botHeading = -Math.toRadians(gyro.getAngle());
         

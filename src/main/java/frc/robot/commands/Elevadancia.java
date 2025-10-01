@@ -37,7 +37,7 @@ public class Elevadancia extends Command {
     //   elevador.ePID = false;
     // else
     //   elevador.ePID = true;
-    elevador.levantagem(controller.getLeftY()*0.8);
+    elevador.levantagem(controller.getLeftY()*0.3);
   }
 
   // Called once the command ends or is interrupted.
