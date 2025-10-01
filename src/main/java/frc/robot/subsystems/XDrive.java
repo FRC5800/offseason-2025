@@ -204,6 +204,24 @@ public class XDrive extends SubsystemBase {
         rb.set(BR);
     }
 
+    public void driveRelative(double y, double x, double r) {
+        double rotX = x;
+        double rotY = y;
+        double omega = r;
+
+        double denominator = Math.max(Math.abs(rotX) + Math.abs(rotY) + Math.abs(r), 1);
+        FL = lerp(FL, ((rotY + rotX + omega) / denominator) * maxSpeed, 0.1);
+        FR = lerp(FR, ((rotY - rotX - omega) / denominator) * maxSpeed, 0.1);
+        BL = lerp(BL, ((rotY - rotX + omega) / denominator) * maxSpeed, 0.1);
+        BR = lerp(BR, ((rotY + rotX - omega) / denominator) * maxSpeed, 0.1);
+
+        // Aplicando aos motores
+        lf.set(FL);
+        rf.set(FR);
+        lb.set(BL);
+        rb.set(BR);
+    }
+
     public double ticksToMeter(double ticks){
         // return ticks;
         return ticks * (Units.inchesToMeters(6)*Math.PI) / 14.75;

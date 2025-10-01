@@ -18,11 +18,8 @@ import java.util.List;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AutoRotate extends Command {
-
     XDrive xDrive;
-    double angle;
-    boolean estage;
-
+    boolean left;
     // List<Pose2dProto> coral_tags = new List<Pose2dStruct>();
     AprilTagFieldLayout apriltag_map = AprilTagFieldLayout.loadField(
         AprilTagFields.k2025ReefscapeAndyMark
@@ -30,7 +27,8 @@ public class AutoRotate extends Command {
     ArrayList<Pose2d> reef_tag_poses = new ArrayList<Pose2d>();
 
     /** Creates a new AutoRotate. */
-    public AutoRotate(XDrive xDrive) {
+    public AutoRotate(XDrive xDrive, boolean left) {
+        this.left = left;
         // Use addRequirements() here to declare subsystem dependencies.
         this.xDrive = xDrive;
         
@@ -51,7 +49,7 @@ public class AutoRotate extends Command {
             reef_tag_poses.add(apriltag_map.getTagPose(t).get().toPose2d());
         }
 
-        angle = this.xDrive
+        double angle = this.xDrive
             .getPose2d()
             .nearest(reef_tag_poses)
             .getRotation()
