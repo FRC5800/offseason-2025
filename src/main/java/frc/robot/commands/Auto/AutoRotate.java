@@ -20,10 +20,9 @@ import java.util.List;
 public class AutoRotate extends Command {
 
     XDrive xDrive;
-    int idTarget;
     double angle;
     boolean estage;
-    boolean closest;
+
     // List<Pose2dProto> coral_tags = new List<Pose2dStruct>();
     AprilTagFieldLayout apriltag_map = AprilTagFieldLayout.loadField(
         AprilTagFields.k2025ReefscapeAndyMark
@@ -31,47 +30,30 @@ public class AutoRotate extends Command {
     ArrayList<Pose2d> reef_tag_poses = new ArrayList<Pose2d>();
 
     /** Creates a new AutoRotate. */
-    public AutoRotate(XDrive xDrive, int idTarget, boolean closest) {
+    public AutoRotate(XDrive xDrive) {
         // Use addRequirements() here to declare subsystem dependencies.
         this.xDrive = xDrive;
-        this.idTarget = idTarget;
-        this.closest = closest;
 
         addRequirements(xDrive);
-    }
-
-    public Pose2d closest_coral(Pose2d pose) {
-        return pose.nearest(reef_tag_poses);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        estage = idTarget == 1 || idTarget == 2;
         int[] reef_tags = { 6, 7, 8, 9, 10, 11 };
 
-        int alliance_offset = DriverStation.getAlliance().orElse(
-                Alliance.Red
-            ) ==
-            Alliance.Red
-            ? 0
-            : 11;
+        int alliance_offset = DriverStation.getAlliance().map(a -> a == Alliance.Red ? 0 : 11).orElse(0);
 
         for (int i = 0; i < 6; i++) {
             var t = reef_tags[i] + alliance_offset;
             reef_tag_poses.add(apriltag_map.getTagPose(t).get().toPose2d());
         }
 
-        var alliance = DriverStation.getAlliance().orElse(Alliance.Red);
-        if (alliance == DriverStation.Alliance.Blue) idTarget += 11;
-
-        angle = apriltag_map
-            .getTagPose(idTarget)
-            .get()
-            .toPose2d()
+        angle = this.xDrive
+            .getPose2d()
+            .nearest(reef_tag_poses)
             .getRotation()
             .getDegrees();
-        if (estage) angle += 180;
 
         xDrive.rotationController.setSetpoint(angle);
     }
