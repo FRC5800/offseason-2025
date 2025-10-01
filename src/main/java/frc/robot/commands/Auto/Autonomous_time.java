@@ -22,10 +22,10 @@ public class Autonomous_time extends SequentialCommandGroup {
   public Autonomous_time(XDrive xdrive, Outtake outtake, Elevador elevador) {
     
     addCommands( 
-      new Drivetimer(xdrive, 2.3),
-      new InstantCommand(() -> elevador.setTarget(160),elevador),
-      new WaitCommand(1.5),
-      new outtake_time(outtake, 2)
+      new Drivetimer(xdrive, 1.2),
+      // new InstantCommand(() -> elevador.setTarget(160),elevador),
+      new WaitCommand(1.5)
+      // new outtake_time(outtake, 2)
     );
 
   }

@@ -178,7 +178,10 @@ public class XDrive extends SubsystemBase {
     }
 
     public void drive(double y, double x, double r) {
-        SmartDashboard.putNumber("drive r", r);
+        SmartDashboard.putNumber("drive Y", y);
+        SmartDashboard.putNumber("drive X", x);
+        SmartDashboard.putNumber("drive R", r);
+        
         if(!isActive)
             return;
         double botHeading = -Math.toRadians(gyro.getAngle() + 180);

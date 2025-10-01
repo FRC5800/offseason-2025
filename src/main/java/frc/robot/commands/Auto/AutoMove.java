@@ -46,7 +46,7 @@ public class AutoMove extends Command {
     @Override
     public void initialize() {
         initialPose = xDrive.getPose2d();
-        Pose2d simulation = new Pose2d(SmartDashboard.getNumber("Drive pose X", 0), SmartDashboard.getNumber("Drive pose Y", 0), new Rotation2d(SmartDashboard.getNumber("Drive pose angle", 0)));
+        // Pose2d simulation = new Pose2d(SmartDashboard.getNumber("Drive pose X", 0), SmartDashboard.getNumber("Drive pose Y", 0), new Rotation2d(SmartDashboard.getNumber("Drive pose angle", 0)));
         
         int[] reef_tags = { 6, 7, 8, 9, 10, 11 };
         
@@ -58,10 +58,10 @@ public class AutoMove extends Command {
             reef_tag_poses.add(apriltag_map.getTagPose(t).get().toPose2d());
         }
         
-        this.xDrive.field.setRobotPose(simulation);
+        // this.xDrive.field.setRobotPose(simulation);
 
         this.target = this.xDrive
-            .field.getRobotPose()
+            .getPose2d()
             .nearest(reef_tag_poses);
         
         double cosT = target
@@ -83,7 +83,7 @@ public class AutoMove extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        xDrive.driveRelative(0, 0.2, 0);
+        xDrive.driveRelative(0.2, 0.4, 0);
         this.xDrive.field.getObject("traj").setPose(target);
     }
     
@@ -99,30 +99,13 @@ public class AutoMove extends Command {
         Rotation2d angleTag = target.getRotation(); 
         Rotation2d angleRobot = new Rotation2d(Math.PI).plus(angleTag); 
         
-        // Pose2d Offset = xDrive.getPose2d().relativeTo(target);
-
-        // Rotation2d angleTriangle = angleRobot.minus(Offset.getRotation()); 
-
-        // double distance = -angleTriangle.getSin()*Offset.getTranslation().getNorm();
-
-        // SmartDashboard.putNumber("Distance axis", distance);
-        // SmartDashboard.putNumber("Distance", Offset.getTranslation().getNorm());
-        // SmartDashboard.putNumber("Angle Tag", angleTag.getDegrees());
-        // SmartDashboard.putNumber("Angle Robot", angleRobot.getDegrees());
-        // SmartDashboard.putNumber("Triangle angle", angleTriangle.getDegrees());
-
-        // var distx = target.getTranslation().minus(xDrive.getPose2d().getTranslation()).rotateBy(xDrive.getPose2d().getRotation().unaryMinus()).getX();
-        // SmartDashboard.putNumber("distancex", distx);
-
-        
-        // return true;
-
         Pose2d robotPose = xDrive.getPose2d();
         robotPose = new Pose2d(robotPose.getTranslation(), angleRobot);
         Pose2d tagPose = target;
     
         // normaliza ângulos para comparação: se diferença angular for ~0 ou ~pi => são paralelas/opostas
         double angleDiff = Math.abs(tagPose.getRotation().getRadians() - robotPose.getRotation().getRadians());
+        
         // reduzir ao intervalo [0, pi]
         angleDiff = Math.abs(Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff)));
     
@@ -153,8 +136,7 @@ public class AutoMove extends Command {
     
         SmartDashboard.putBoolean("PerpCloseEnough", closeEnough);
     
-        return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 2
-        ;
+        return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 2;
 
     }
 }

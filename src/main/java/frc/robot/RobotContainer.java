@@ -60,12 +60,16 @@ public class RobotContainer {
 
   private void configureBindings() {
     xDrive.setDefaultCommand(new RunCommand(() -> {
-      xDrive.drive(-controller.getY(), controller.getX(), controller.getZ());
+      double Yaxis = Math.abs(controller.getY()) > 0.15 ? -controller.getY() : 0;
+      double Xaxis = Math.abs(controller.getX()) > 0.15 ? controller.getX() : 0;
+      double Zaxis = Math.abs(controller.getZ()) > 0.15 ? controller.getZ() : 0;
+      
+      xDrive.drive(Yaxis, Xaxis, Zaxis);
 
       if(controller.getPOV() == 270)
-        xDrive.driveRelative(0, -0.2, 0);
+        xDrive.driveRelative(0, -0.3, 0);
       else if(controller.getPOV() == 90)
-        xDrive.driveRelative(0, 0.2, 0);
+        xDrive.driveRelative(0, 0.3, 0);
     }, xDrive));
     new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
     new JoystickButton(controller, 5).onTrue(new AutoMove(xDrive, true));
