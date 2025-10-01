@@ -65,8 +65,8 @@ public class RobotContainer {
     
     height = SmartDashboard.getNumber("Altura do Elevador", 150);
 
-    elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
-    // elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
+    // elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
+    elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
     // new JoystickButt%on(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
     // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
     // new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));

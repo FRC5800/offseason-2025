@@ -54,6 +54,7 @@ public class Elevador extends SubsystemBase {
     // Encoders
     private RelativeEncoder masterEncoder;
     private RelativeEncoder slaveEncoder;
+    double speed = 0;
 
     double target = 5;
     // Controllers (temporary constants)
@@ -120,6 +121,10 @@ public class Elevador extends SubsystemBase {
         // SmartDashboard.putData("Elevator Mech", elevatorMech); // Put the canva of the elevator on the Dashboard
     };
 
+    double lerp(double a, double b, double f)  {
+        return a + f * (b - a);
+    }
+
     @Override
     public void periodic() {
         // if(ePID)
@@ -164,8 +169,9 @@ public class Elevador extends SubsystemBase {
 
     // Raise elevator method
     public void levantagem(double controlePos) {
-        elevatorMaster.set(-controlePos);
-        elevatorSlave.set(controlePos);
+        speed = lerp(speed, -controlePos, 0.1);
+        elevatorMaster.set(-speed);
+        elevatorSlave.set(speed);
     }
 
     // set elevator position with PID

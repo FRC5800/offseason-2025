@@ -14,10 +14,10 @@ import frc.robot.subsystems.Elevador;
 public class ElevatorPID extends Command {
   /** Creates a new ElevatorPID. */
   Elevador elevador;
-  PS4Controller controller;
+  Joystick controller;
   double target;
 
-  public ElevatorPID(Elevador elevador, PS4Controller controller, double target) {
+  public ElevatorPID(Elevador elevador, Joystick controller, double target) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.elevador = elevador;
     this.controller = controller;
@@ -37,7 +37,7 @@ public class ElevatorPID extends Command {
     if(controller.getPOV() == 0)
       elevador.setTarget(160);
     else if(controller.getPOV() == 180)
-      elevador.setTarget(5);
+      elevador.setTarget(0);
     else if(controller.getPOV() == 270)
       elevador.setTarget(75);
     else if(controller.getPOV() == 90)
