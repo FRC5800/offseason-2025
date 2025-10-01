@@ -43,6 +43,8 @@ public class Elevador extends SubsystemBase {
     private static final double SECOND_STATE = 1.77765;
     private static final double THIRD_STATE = 1.97174;
 
+    private double maxspeed = 0.30;
+
     public boolean ePID = true;
 
     // Motors controllers
@@ -90,6 +92,7 @@ public class Elevador extends SubsystemBase {
 
         SmartDashboard.putString("Rodou?", "Não");
         SmartDashboard.putNumber("Target", -1);
+        SmartDashboard.putNumber("maxSpeed", maxspeed);
         pidControllerElevador.setTolerance(0.5);
 
         SmartDashboard.putData("reset elevator encoders", new InstantCommand(() -> {masterEncoder.setPosition(0); slaveEncoder.setPosition(0);}));
@@ -120,6 +123,7 @@ public class Elevador extends SubsystemBase {
     @Override
     public void periodic() {
         // if(ePID)
+        maxspeed = SmartDashboard.getNumber("maxSpeed", 0.30);
         elevatorPIDMove(target);
     // This method will be called once per scheduler run
         SmartDashboard.putNumber("Elevator Height", getHeight());
@@ -172,7 +176,7 @@ public class Elevador extends SubsystemBase {
         SmartDashboard.putNumber("Target", target);
 
         pidControllerElevador.setSetpoint(target);
-        double speed = MathUtil.clamp(pidControllerElevador.calculate(getHeight()), -0.15, 0.30);
+        double speed = MathUtil.clamp(pidControllerElevador.calculate(getHeight()), -maxspeed, maxspeed);
 
         elevatorMaster.set(speed);
         elevatorSlave.set(-speed);

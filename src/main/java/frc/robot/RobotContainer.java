@@ -16,6 +16,7 @@ import frc.robot.commands.ElevatorPID;
 import frc.robot.subsystems.Elevador;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -48,15 +49,19 @@ public class RobotContainer {
   private Elevador elevador = new Elevador();
   private PivotFunil pivotFunil = new PivotFunil();
   private Outtake outtake = new Outtake();
+  private double height = 150;
 
   public RobotContainer() {
-  
+    SmartDashboard.getNumber("Altura do Elevador", height);
     configureBindings();
   }
 
   private void configureBindings() {
     xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
     new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
+
+    
+    height = SmartDashboard.getNumber("Altura do Elevador", 150);
 
     // elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
     elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
