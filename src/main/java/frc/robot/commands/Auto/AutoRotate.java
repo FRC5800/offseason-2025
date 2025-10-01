@@ -33,7 +33,7 @@ public class AutoRotate extends Command {
     public AutoRotate(XDrive xDrive) {
         // Use addRequirements() here to declare subsystem dependencies.
         this.xDrive = xDrive;
-
+        
         addRequirements(xDrive);
     }
 
