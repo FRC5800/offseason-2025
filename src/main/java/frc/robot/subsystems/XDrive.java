@@ -83,7 +83,7 @@ public class XDrive extends SubsystemBase {
     public PIDController movementController = new PIDController(0.05, 0, 0);
 
     // Variables to define the velocity of the robot
-    double maxSpeed = 0.7;
+    double maxSpeed = 0.9;
     boolean turbo = true;
 
     // Constructor
@@ -163,14 +163,14 @@ public class XDrive extends SubsystemBase {
             maxSpeed = 0.2;
             turbo = false;
         } else {
-            maxSpeed = 0.7;
+            maxSpeed = 0.9;
             turbo = true;
         }
     }
 
     public Pose2d getPose2d(){
-        //return poseEstimator.getEstimatedPosition();
-        return field.getRobotPose();
+        return poseEstimator.getEstimatedPosition();
+        // return field.getRobotPose();
     }
 
     public void resetController(){

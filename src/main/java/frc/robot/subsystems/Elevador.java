@@ -138,6 +138,8 @@ public class Elevador extends SubsystemBase {
         // SmartDashboard.putNumber("right elevator motor", elevatorSlave.get());
         SmartDashboard.putBoolean("in the setpoint", pidControllerElevador.atSetpoint());
         SmartDashboard.putNumber("elevator setpoint", pidControllerElevador.getSetpoint());
+        SmartDashboard.putNumber("LeftPower", elevatorMaster.get());
+        SmartDashboard.putNumber("RightPower", elevatorSlave.get());
     }
 
     /*

@@ -5,7 +5,11 @@
 package frc.robot.commands.Auto;
 
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.ElevatorPID;
+import frc.robot.subsystems.Elevador;
 import frc.robot.subsystems.Outtake;
 import frc.robot.subsystems.XDrive;
 
@@ -15,13 +19,13 @@ import frc.robot.subsystems.XDrive;
 
 public class Autonomous_time extends SequentialCommandGroup {
   
-  public Autonomous_time(XDrive xdrive, Outtake outtake) {
+  public Autonomous_time(XDrive xdrive, Outtake outtake, Elevador elevador) {
     
     addCommands( 
-      new Drivetimer(xdrive, 3.2),
+      new Drivetimer(xdrive, 2.3),
+      new InstantCommand(() -> elevador.setTarget(160),elevador),
+      new WaitCommand(1.5),
       new outtake_time(outtake, 2)
-
-
     );
 
   }

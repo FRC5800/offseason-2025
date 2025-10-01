@@ -68,12 +68,13 @@ public class RobotContainer {
         xDrive.driveRelative(0, 0.2, 0);
     }, xDrive));
     new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
-
+    new JoystickButton(controller, 5).onTrue(new AutoMove(xDrive, true));
+    new JoystickButton(controller, 6).onTrue(new AutoMove(xDrive, false));
     
     height = SmartDashboard.getNumber("Altura do Elevador", 150);
 
     // elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
-    // elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
+    elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
     // new JoystickButt%on(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
     // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
     // new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));
@@ -91,6 +92,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     //return new Drivetimer(xDrive, 2);
     // An example command will be run in autonomous
-    return new Autonomous_time(xDrive, outtake);
+    return new Autonomous_time(xDrive, outtake, elevador);
   }
 }

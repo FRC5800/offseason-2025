@@ -33,7 +33,7 @@ public class Drivetimer extends Command {
   @Override
   public void execute() {
 
-    xdrive.drive(0.8, 0, 0);
+    xdrive.drive(-0.8, 0, 0);
 
   }
 
