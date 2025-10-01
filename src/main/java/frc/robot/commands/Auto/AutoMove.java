@@ -24,6 +24,7 @@ public class AutoMove extends Command {
     double distance;
     boolean left;
     Pose2d target;
+    Pose2d initialPose;
     ArrayList<Pose2d> reef_tag_poses = new ArrayList<Pose2d>();
     AprilTagFieldLayout apriltag_map = AprilTagFieldLayout.loadField(
     AprilTagFields.k2025ReefscapeAndyMark
@@ -44,6 +45,7 @@ public class AutoMove extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        initialPose = xDrive.getPose2d();
         Pose2d simulation = new Pose2d(SmartDashboard.getNumber("Drive pose X", 0), SmartDashboard.getNumber("Drive pose Y", 0), new Rotation2d(SmartDashboard.getNumber("Drive pose angle", 0)));
         
         int[] reef_tags = { 6, 7, 8, 9, 10, 11 };
@@ -151,7 +153,8 @@ public class AutoMove extends Command {
     
         SmartDashboard.putBoolean("PerpCloseEnough", closeEnough);
     
-        return closeEnough;
+        return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 2
+        ;
 
     }
 }
