@@ -143,7 +143,7 @@ public class XDrive extends SubsystemBase {
             poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
         });
         field.setRobotPose(
-            poseEstimator.update(new Rotation2d(Units.degreesToRadians(gyro.getAngle())),
+            poseEstimator.update(new Rotation2d(Units.degreesToRadians(-gyro.getAngle())),
             new MecanumDriveWheelPositions(ticksToMeter(lfEncoder.getPosition()), ticksToMeter(rfEncoder.getPosition()), ticksToMeter(lbEncoder.getPosition()), ticksToMeter(rbEncoder.getPosition())))
         );
     }

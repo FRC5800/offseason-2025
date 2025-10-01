@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -67,13 +68,23 @@ public class RobotContainer {
       xDrive.drive(Yaxis, Xaxis, Zaxis);
 
       if(controller.getPOV() == 270)
-        xDrive.driveRelative(0, -0.3, 0);
+        xDrive.driveRelative(0, -0.4, 0);
       else if(controller.getPOV() == 90)
-        xDrive.driveRelative(0, 0.3, 0);
+        xDrive.driveRelative(0, 0.4, 0);
     }, xDrive));
     new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
-    new JoystickButton(controller, 5).onTrue(new AutoMove(xDrive, true));
-    new JoystickButton(controller, 6).onTrue(new AutoMove(xDrive, false));
+    
+    new JoystickButton(controller, 7).onTrue(new AutoRotate(xDrive, true));
+    new JoystickButton(controller, 8).onTrue(new AutoMove(xDrive, true));
+
+    new JoystickButton(controller, 5).onTrue(new SequentialCommandGroup(
+      new AutoRotate(xDrive, true), 
+      new AutoMove(xDrive, true))
+    );
+    new JoystickButton(controller, 6).onTrue(new SequentialCommandGroup(
+      new AutoRotate(xDrive, false), 
+      new AutoMove(xDrive, false))
+    );
     
     height = SmartDashboard.getNumber("Altura do Elevador", 150);
 
