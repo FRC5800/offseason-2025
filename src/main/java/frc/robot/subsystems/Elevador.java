@@ -92,7 +92,7 @@ public class Elevador extends SubsystemBase {
 
         SmartDashboard.putString("Rodou?", "Não");
         SmartDashboard.putNumber("Target", -1);
-        SmartDashboard.putNumber("maxSpeed", maxspeed);
+        SmartDashboard.putNumber("Velocidade Máxima Elevador", maxspeed);
         pidControllerElevador.setTolerance(0.5);
 
         SmartDashboard.putData("reset elevator encoders", new InstantCommand(() -> {masterEncoder.setPosition(0); slaveEncoder.setPosition(0);}));
@@ -123,7 +123,7 @@ public class Elevador extends SubsystemBase {
     @Override
     public void periodic() {
         // if(ePID)
-        maxspeed = SmartDashboard.getNumber("maxSpeed", 0.30);
+        maxspeed = SmartDashboard.getNumber("Velocidade Máxima Elevador", 0.30);
         elevatorPIDMove(target);
     // This method will be called once per scheduler run
         SmartDashboard.putNumber("Elevator Height", getHeight());
