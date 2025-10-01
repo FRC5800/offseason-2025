@@ -138,13 +138,13 @@ public class XDrive extends SubsystemBase {
         SmartDashboard.putNumber("Right back current", rb.getOutputCurrent());
         SmartDashboard.putNumber("gyro", gyro.getAngle());
         SmartDashboard.putNumber("PID Rotation", rotationController.getSetpoint());
-        visionSystem.getEstimatedPose().ifPresent(pose -> {
-            poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
-        });
-        field.setRobotPose(
-            poseEstimator.update(new Rotation2d(Units.degreesToRadians(gyro.getAngle())),
-            new MecanumDriveWheelPositions(ticksToMeter(lfEncoder.getPosition()), ticksToMeter(rfEncoder.getPosition()), ticksToMeter(lbEncoder.getPosition()), ticksToMeter(rbEncoder.getPosition())))
-        );
+        // visionSystem.getEstimatedPose().ifPresent(pose -> {
+        //     poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
+        // });
+        // field.setRobotPose(
+        //     poseEstimator.update(new Rotation2d(Units.degreesToRadians(gyro.getAngle())),
+        //     new MecanumDriveWheelPositions(ticksToMeter(lfEncoder.getPosition()), ticksToMeter(rfEncoder.getPosition()), ticksToMeter(lbEncoder.getPosition()), ticksToMeter(rbEncoder.getPosition())))
+        // );
     }
 
     // Method to make the drive more smooth
@@ -168,7 +168,8 @@ public class XDrive extends SubsystemBase {
     }
 
     public Pose2d getPose2d(){
-        return poseEstimator.getEstimatedPosition();
+        //return poseEstimator.getEstimatedPosition();
+        return field.getRobotPose();
     }
 
     public void resetController(){
