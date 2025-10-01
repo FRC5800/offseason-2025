@@ -66,7 +66,7 @@ public class RobotContainer {
 
     // elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
     elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
-    // new JoystickButton(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
+    // new JoystickButt%on(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
     // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
     // new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));
     // new JoystickButton(controller02, 2).whileTrue(new ClimberComm(climber, -0.5));
@@ -74,7 +74,7 @@ public class RobotContainer {
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
     // new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));
     // new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 155));
-    new JoystickButton(controller, 1).onTrue(new AutoMove(xDrive, true));
+    new JoystickButton(controller, 1).whileTrue(new AutoRotate(xDrive, true));
     // new JoystickButton(controller, 3).onTrue(new MoveToTrajectory(xDrive, 1));    
     // new JoystickButton(controller, 4).onTrue(new MoveToTrajectory(xDrive, 6));    
   }

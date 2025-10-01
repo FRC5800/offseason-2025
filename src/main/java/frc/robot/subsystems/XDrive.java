@@ -79,7 +79,7 @@ public class XDrive extends SubsystemBase {
     PIDController xController = new PIDController(1, 0, 0);
     ProfiledPIDController rController = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(3, 1));
     public HolonomicDriveController controller = new HolonomicDriveController(xController, yController, rController);
-    public PIDController rotationController = new PIDController(0.0032, 0, 0);
+    public PIDController rotationController = new PIDController(0.0032, 0.003, 0);
     public PIDController movementController = new PIDController(0.05, 0, 0);
 
     // Variables to define the velocity of the robot
@@ -138,6 +138,7 @@ public class XDrive extends SubsystemBase {
         SmartDashboard.putNumber("Right back current", rb.getOutputCurrent());
         SmartDashboard.putNumber("gyro", gyro.getAngle());
         SmartDashboard.putNumber("PID Rotation", rotationController.getSetpoint());
+        SmartDashboard.putData("pid rot", rotationController);
         visionSystem.getEstimatedPose().ifPresent(pose -> {
             poseEstimator.addVisionMeasurement(pose, Timer.getFPGATimestamp());
         });
