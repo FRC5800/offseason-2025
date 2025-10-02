@@ -126,7 +126,11 @@ public class AutoMove extends Command {
         // if (closeEnoughX()) x = 0;
         // if (closeEnoughY()) y = 0; NAO TESTADO (REMOVER APOS TESTE) 
 
-        xDrive.driveRelative(y, x, 0);
+        if(RobotBase.isSimulation()){
+            xDrive.driveRelative(y, x, 0);
+        }else{
+            xDrive.driveRelative(0, x, 0);
+        }
     }
     
     // Called once the command ends or is interrupted.
