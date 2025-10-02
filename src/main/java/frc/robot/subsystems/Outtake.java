@@ -11,7 +11,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 /*Criando a classe do outtake */
 public class Outtake extends SubsystemBase {
   /*Variáveis */
-
+  double speed = 0.5;
+  boolean turbo = true;
+  
   //motor das rodas do outtake
   final TalonSRX rodinhas; 
 
@@ -26,11 +28,19 @@ public class Outtake extends SubsystemBase {
   public void periodic() {
   }
 
+  public void switch_speed(){
+    if(turbo)
+      turbo = !turbo;
+    else
+      turbo = !turbo;
+
+  }
+
   public void run(double speed){
-
-    rodinhas.set(TalonSRXControlMode.PercentOutput, speed);
-
-
+    if(turbo)
+      rodinhas.set(TalonSRXControlMode.PercentOutput, speed);
+    else
+      rodinhas.set(TalonSRXControlMode.PercentOutput, speed-0.2);
   }
 
 }

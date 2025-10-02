@@ -100,6 +100,7 @@ public class RobotContainer {
     
     new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));;
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
+    new JoystickButton(controller02, 1).onTrue(new RunCommand(() -> outtake.switch_speed(), outtake));
     // new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));
     // new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 155));
     // new JoystickButton(controller, 1).whileTrue(new AutoRotate(xDrive, true));
