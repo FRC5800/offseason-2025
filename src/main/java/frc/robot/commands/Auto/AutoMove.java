@@ -123,8 +123,8 @@ public class AutoMove extends Command {
         SmartDashboard.putNumber("distY", distY);
         var y = 0.25;
 
-        if (closeEnoughX()) x = 0;
-        if (closeEnoughY()) y = 0; 
+        // if (closeEnoughX()) x = 0;
+        // if (closeEnoughY()) y = 0; NAO TESTADO (REMOVER APOS TESTE) 
 
         xDrive.driveRelative(y, x, 0);
     }
