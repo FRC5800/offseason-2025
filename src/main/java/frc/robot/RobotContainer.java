@@ -74,10 +74,10 @@ public class RobotContainer {
         xDrive.driveRelative(0, 0.4, 0);
     }, xDrive));
 
-    new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
+    // new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
     
     // new JoystickButton(controller, 3).onTrue(new AutoRotate(xDrive));
-    // new JoystickButton(controller, 4).onTrue(new AutoMove(xDrive, true));
+    new JoystickButton(controller, 4).whileTrue(new AutoMove(xDrive, true));
 
     new JoystickButton(controller, 3).whileTrue(new SequentialCommandGroup(
       new AutoRotate(xDrive),

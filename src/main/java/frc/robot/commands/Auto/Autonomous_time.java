@@ -23,11 +23,13 @@ public class Autonomous_time extends SequentialCommandGroup {
     
     addCommands( 
       new Drivetimer(xdrive, 
-      2.8),
-      new WaitCommand(0.5),
-      new InstantCommand(() -> elevador.setTarget(160),elevador),
-      new WaitCommand(2),
-      new outtake_time(outtake, 1)
+      1.5),
+      new WaitCommand(0.5)
+      // new AutoMove(xdrive, true).withTimeout(6),
+      // new InstantCommand(() -> elevador.setTarget(160),elevador),
+      // new WaitCommand(2),
+      // new outtake_time(outtake, 1),
+      // new InstantCommand(() -> elevador.setTarget(0),elevador)
     );
 
   }

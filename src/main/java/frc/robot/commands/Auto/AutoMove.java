@@ -118,7 +118,7 @@ public class AutoMove extends Command {
         SmartDashboard.putNumber("PerpDistance_abs_m", perpAbs);
         SmartDashboard.putNumber("AngleDiff_deg", Math.toDegrees(angleDiff));
 
-        var x = -perpSigned > 0 ? 0.25 : -0.25;
+        var x = -perpSigned > 0 ? 0.4 : -0.4;
         this.distY = xDrive.getPose2d().getTranslation().plus(new Translation2d(0, x)).getDistance(target.getTranslation())-0.4;
         SmartDashboard.putNumber("distY", distY);
         var y = 0.25;
@@ -129,8 +129,11 @@ public class AutoMove extends Command {
         // if(RobotBase.isSimulation()){
             // xDrive.driveRelative(y, x, 0);
         // }else{
-            xDrive.driveRelative(0, -x, 0); //testar codigo invertido, apos desinverter se for o caso
-        // }
+        if(x != 0){
+            xDrive.driveRelative(0, x*perpAbs + Math.signum(x)*0.2, 0); //testar codigo invertido, apos desinverter se for o caso
+        }
+            // }
+
     }
     
     // Called once the command ends or is interrupted.
