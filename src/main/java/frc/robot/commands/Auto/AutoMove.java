@@ -39,6 +39,7 @@ public class AutoMove extends Command {
         SmartDashboard.putNumber("Drive pose X", 0);
         SmartDashboard.putNumber("Drive pose y", 0);
         SmartDashboard.putNumber("Drive pose angle", 0);
+        SmartDashboard.putNumber("distY", 0);
         addRequirements(xDrive);
     }
     
@@ -59,25 +60,27 @@ public class AutoMove extends Command {
         }
         
         // this.xDrive.field.setRobotPose(simulation);
+        double mult = left ? -1 : 1;
 
         this.target = this.xDrive
             .getPose2d()
-            .nearest(reef_tag_poses);
+            .nearest(reef_tag_poses)
+            .transformBy(new Transform2d(0, 0.17*mult, new Rotation2d()));
         
-        double cosT = target
-            .getRotation()
-            .getCos();
-        double senT = target
-            .getRotation()
-            .getSin();
+        // double cosT = target
+        //     .getRotation()
+        //     .getCos();
+        // double senT = target
+        //     .getRotation()
+        //     .getSin();
         
-        double mult = left ? 1 : -1;
+       
 
-        target = target
-            .transformBy(
-                new Transform2d(
-                    new Translation2d(0.17*-senT*mult, 0.17*cosT*mult),
-                    new Rotation2d()));
+        // target = target
+        //     .transformBy(
+        //         new Transform2d(
+        //             new Translation2d(0.17*-senT*mult, 0.17*cosT*mult),
+        //             new Rotation2d()));
         
         // xDrive.movementController.setSetpoint(target.getTranslation().getNorm());
     }
@@ -86,6 +89,7 @@ public class AutoMove extends Command {
     
     double perpSigned;
     double perpAbs;
+    double distY = 0;
     
     @Override
     public void execute() {
@@ -112,9 +116,16 @@ public class AutoMove extends Command {
         SmartDashboard.putNumber("PerpDistance_signed_m", perpSigned);
         SmartDashboard.putNumber("PerpDistance_abs_m", perpAbs);
         SmartDashboard.putNumber("AngleDiff_deg", Math.toDegrees(angleDiff));
-        
 
-        xDrive.driveRelative(0.2, -perpSigned > 0 ? 0.4 : -0.4, 0);
+        var x = -perpSigned > 0 ? 0.4 : -0.4;
+        this.distY = xDrive.getPose2d().getTranslation().plus(new Translation2d(0, x)).getDistance(target.getTranslation())-0.5;
+        SmartDashboard.putNumber("distY", distY);
+        var y = 0.4;
+
+        if (closeEnoughX()) x = 0;
+        if (closeEnoughY()) y = 0; 
+
+        xDrive.driveRelative(0.2, x, 0);
     }
     
     // Called once the command ends or is interrupted.
@@ -122,14 +133,19 @@ public class AutoMove extends Command {
     public void end(boolean interrupted) {
         xDrive.drive(0, 0, 0);
     }
+
+    boolean closeEnoughX() {
+        return perpAbs < 0.07;
+    }
+
+    boolean closeEnoughY() {
+        return distY < 0.5;
+    }
     
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {    
-    
-        // Threshold de distância em metros para considerar "chegou" (ajuste conforme necessário)
-        double finishThreshold = 0.07; // 3 cm
-        boolean closeEnough = perpAbs < finishThreshold;
+        boolean closeEnough = closeEnoughX() && closeEnoughY();
     
         SmartDashboard.putBoolean("PerpCloseEnough", closeEnough);
     
