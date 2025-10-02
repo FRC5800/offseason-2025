@@ -129,7 +129,7 @@ public class XDrive extends SubsystemBase {
         SmartDashboard.putData("field", field); // Put the field on the map
 
         // Configuring PIDControllers
-        rotationController.setTolerance(1);
+        rotationController.setTolerance(0.4);
         rotationController.enableContinuousInput(0, 360);
         movementController.setTolerance(1);
     }

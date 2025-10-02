@@ -16,6 +16,7 @@ import frc.robot.commands.ElevatorPID;
 import frc.robot.subsystems.Elevador;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -46,7 +47,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
   private XDrive xDrive = new XDrive();
-  private Joystick controller = new Joystick(0);
+  private XboxController controller = new XboxController(0);
   private Joystick controller02 = new Joystick(1);
   // private Climber climber = new Climber();
   private Elevador elevador = new Elevador();
@@ -61,9 +62,9 @@ public class RobotContainer {
 
   private void configureBindings() {
     xDrive.setDefaultCommand(new RunCommand(() -> {
-      double Yaxis = Math.abs(controller.getY()) > 0.15 ? -controller.getY() : 0;
-      double Xaxis = Math.abs(controller.getX()) > 0.15 ? controller.getX() : 0;
-      double Zaxis = Math.abs(controller.getZ()) > 0.15 ? controller.getZ() : 0;
+      double Yaxis = Math.abs(controller.getLeftY()) > 0.15 ? -controller.getLeftY() : 0;
+      double Xaxis = Math.abs(controller.getLeftX()) > 0.15 ? controller.getLeftX() : 0;
+      double Zaxis = Math.abs(controller.getRightX()) > 0.15 ? controller.getRightX() : 0;
       
       xDrive.drive(Yaxis, Xaxis, Zaxis);
 
@@ -74,14 +75,14 @@ public class RobotContainer {
     }, xDrive));
     // new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
     
-    new JoystickButton(controller, 3).onTrue(new AutoRotate(xDrive));
+    // new JoystickButton(controller, 3).onTrue(new AutoRotate(xDrive));
     new JoystickButton(controller, 4).onTrue(new AutoMove(xDrive, true));
 
-    new JoystickButton(controller, 1).onTrue(new SequentialCommandGroup(
+    new JoystickButton(controller, 3).toggleOnTrue(new SequentialCommandGroup(
       new AutoRotate(xDrive), 
       new AutoMove(xDrive, true))
     );
-    new JoystickButton(controller, 2).onTrue(new SequentialCommandGroup(
+    new JoystickButton(controller, 2).toggleOnTrue(new SequentialCommandGroup(
       new AutoRotate(xDrive), 
       new AutoMove(xDrive, false))
     );
@@ -90,10 +91,12 @@ public class RobotContainer {
 
     // elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
     elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
+
     // new JoystickButt%on(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
     // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
     // new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));
     // new JoystickButton(controller02, 2).whileTrue(new ClimberComm(climber, -0.5));
+    
     new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));;
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
     // new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));

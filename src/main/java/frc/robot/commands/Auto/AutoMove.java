@@ -117,15 +117,15 @@ public class AutoMove extends Command {
         SmartDashboard.putNumber("PerpDistance_abs_m", perpAbs);
         SmartDashboard.putNumber("AngleDiff_deg", Math.toDegrees(angleDiff));
 
-        var x = -perpSigned > 0 ? 0.4 : -0.4;
-        this.distY = xDrive.getPose2d().getTranslation().plus(new Translation2d(0, x)).getDistance(target.getTranslation())-0.5;
+        var x = -perpSigned > 0 ? 0.25 : -0.25;
+        this.distY = xDrive.getPose2d().getTranslation().plus(new Translation2d(0, x)).getDistance(target.getTranslation())-0.4;
         SmartDashboard.putNumber("distY", distY);
-        var y = 0.4;
+        var y = 0.25;
 
         if (closeEnoughX()) x = 0;
         if (closeEnoughY()) y = 0; 
 
-        xDrive.driveRelative(0.2, x, 0);
+        xDrive.driveRelative(y, x, 0);
     }
     
     // Called once the command ends or is interrupted.
@@ -139,7 +139,7 @@ public class AutoMove extends Command {
     }
 
     boolean closeEnoughY() {
-        return distY < 0.5;
+        return distY < 0.2;
     }
     
     // Returns true when the command should end.

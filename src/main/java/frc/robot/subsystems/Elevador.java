@@ -185,6 +185,8 @@ public class Elevador extends SubsystemBase {
 
         pidControllerElevador.setSetpoint(target);
         double speed = MathUtil.clamp(pidControllerElevador.calculate(getHeight()), -maxspeed, maxspeed);
+        if(target!= 160)
+            speed = speed * 0.5;    
 
         elevatorMaster.set(speed);
         elevatorSlave.set(-speed);
