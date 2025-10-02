@@ -56,7 +56,7 @@ public class Elevador extends SubsystemBase {
     private RelativeEncoder slaveEncoder;
     double speed = 0;
 
-    double target = 5;
+    double target = 0;
     // Controllers (temporary constants)
     public PIDController pidControllerElevador = new PIDController(0.05, 0, 0);
     // Canva mechanism
