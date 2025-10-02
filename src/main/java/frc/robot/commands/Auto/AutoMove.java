@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -145,11 +146,13 @@ public class AutoMove extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {    
-        boolean closeEnough = closeEnoughX() && closeEnoughY();
-    
-        SmartDashboard.putBoolean("PerpCloseEnough", closeEnough);
-    
-        return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 3;
-
+        if(RobotBase.isSimulation()){
+            boolean closeEnough = closeEnoughX() && closeEnoughY();
+            
+            SmartDashboard.putBoolean("PerpCloseEnough", closeEnough);
+        
+            return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 3;
+        }
+        return false;
     }
 }
