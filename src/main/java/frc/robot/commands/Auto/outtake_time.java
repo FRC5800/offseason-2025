@@ -32,7 +32,7 @@ public class outtake_time extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    outtaketime.run(0.8);
+    outtaketime.run(-0.8);
 
 
 
