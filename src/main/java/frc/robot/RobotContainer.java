@@ -72,17 +72,17 @@ public class RobotContainer {
       else if(controller.getPOV() == 90)
         xDrive.driveRelative(0, 0.4, 0);
     }, xDrive));
-    new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
+    // new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
     
-    new JoystickButton(controller, 7).onTrue(new AutoRotate(xDrive, true));
-    new JoystickButton(controller, 8).onTrue(new AutoMove(xDrive, true));
+    new JoystickButton(controller, 3).onTrue(new AutoRotate(xDrive));
+    new JoystickButton(controller, 4).onTrue(new AutoMove(xDrive, true));
 
-    new JoystickButton(controller, 5).onTrue(new SequentialCommandGroup(
-      new AutoRotate(xDrive, true), 
+    new JoystickButton(controller, 1).onTrue(new SequentialCommandGroup(
+      new AutoRotate(xDrive), 
       new AutoMove(xDrive, true))
     );
-    new JoystickButton(controller, 6).onTrue(new SequentialCommandGroup(
-      new AutoRotate(xDrive, false), 
+    new JoystickButton(controller, 2).onTrue(new SequentialCommandGroup(
+      new AutoRotate(xDrive), 
       new AutoMove(xDrive, false))
     );
     

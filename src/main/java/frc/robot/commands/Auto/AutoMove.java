@@ -71,20 +71,50 @@ public class AutoMove extends Command {
             .getRotation()
             .getSin();
         
+        double mult = left ? 1 : -1;
+
         target = target
             .transformBy(
                 new Transform2d(
-                    new Translation2d(0.17*-senT, 0.17*cosT),
+                    new Translation2d(0.17*-senT*mult, 0.17*cosT*mult),
                     new Rotation2d()));
         
         // xDrive.movementController.setSetpoint(target.getTranslation().getNorm());
     }
     
     // Called every time the scheduler runs while the command is scheduled.
+    
+    double perpSigned;
+    double perpAbs;
+    
     @Override
     public void execute() {
-        xDrive.driveRelative(0.2, 0.4, 0);
         this.xDrive.field.getObject("traj").setPose(target);
+        
+        Rotation2d angleTag = target.getRotation(); 
+        Rotation2d angleRobot = new Rotation2d(Math.PI).plus(angleTag); 
+        
+        Pose2d robotPose = xDrive.getPose2d();
+        robotPose = new Pose2d(robotPose.getTranslation(), angleRobot);
+        Pose2d tagPose = target;
+        
+        // normaliza ângulos para comparação: se diferença angular for ~0 ou ~pi => são paralelas/opostas
+        double angleDiff = Math.abs(tagPose.getRotation().getRadians() - robotPose.getRotation().getRadians());
+        
+        // reduzir ao intervalo [0, pi]
+        angleDiff = Math.abs(Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff)));
+        
+        // vetor do tag até o robô no frame da tag: já nos dá componente lateral (Y) — a distância perpendicular
+        Pose2d robotRelToTag = robotPose.relativeTo(tagPose);
+        this.perpSigned = robotRelToTag.getTranslation().getY();
+        this.perpAbs = Math.abs(perpSigned);
+        
+        SmartDashboard.putNumber("PerpDistance_signed_m", perpSigned);
+        SmartDashboard.putNumber("PerpDistance_abs_m", perpAbs);
+        SmartDashboard.putNumber("AngleDiff_deg", Math.toDegrees(angleDiff));
+        
+
+        xDrive.driveRelative(0.2, -perpSigned > 0 ? 0.4 : -0.4, 0);
     }
     
     // Called once the command ends or is interrupted.
@@ -95,40 +125,7 @@ public class AutoMove extends Command {
     
     // Returns true when the command should end.
     @Override
-    public boolean isFinished() {
-        Rotation2d angleTag = target.getRotation(); 
-        Rotation2d angleRobot = new Rotation2d(Math.PI).plus(angleTag); 
-        
-        Pose2d robotPose = xDrive.getPose2d();
-        robotPose = new Pose2d(robotPose.getTranslation(), angleRobot);
-        Pose2d tagPose = target;
-    
-        // normaliza ângulos para comparação: se diferença angular for ~0 ou ~pi => são paralelas/opostas
-        double angleDiff = Math.abs(tagPose.getRotation().getRadians() - robotPose.getRotation().getRadians());
-        
-        // reduzir ao intervalo [0, pi]
-        angleDiff = Math.abs(Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff)));
-    
-        // threshold angular para considerar "paralelas" (em radianos). ex: 5 graus ~ 0.087 rad
-        double parallelAngleThreshold = Math.toRadians(5.0);
-    
-        // vetor do tag até o robô no frame da tag: já nos dá componente lateral (Y) — a distância perpendicular
-        Pose2d robotRelToTag = robotPose.relativeTo(tagPose);
-        double perpSigned = robotRelToTag.getTranslation().getY();
-        double perpAbs = Math.abs(perpSigned);
-    
-        SmartDashboard.putNumber("PerpDistance_signed_m", perpSigned);
-        SmartDashboard.putNumber("PerpDistance_abs_m", perpAbs);
-        SmartDashboard.putNumber("AngleDiff_deg", Math.toDegrees(angleDiff));
-    
-        // se NÃO são paralelas (ou seja, intersectam), a distância entre retas infinitas é zero
-        if (angleDiff > parallelAngleThreshold && Math.abs(angleDiff - Math.PI) > parallelAngleThreshold) {
-            SmartDashboard.putString("LineRelation", "intersecting (distance = 0)");
-            // você pode optar por terminar aqui se quiser que intersectem; aqui consideramos não finalizado
-            // return true; // opcional: se você quer terminar quando linhas se cruzam
-        } else {
-            SmartDashboard.putString("LineRelation", "parallel/opposed");
-        }
+    public boolean isFinished() {    
     
         // Threshold de distância em metros para considerar "chegou" (ajuste conforme necessário)
         double finishThreshold = 0.07; // 3 cm
@@ -136,7 +133,7 @@ public class AutoMove extends Command {
     
         SmartDashboard.putBoolean("PerpCloseEnough", closeEnough);
     
-        return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 2;
+        return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 3;
 
     }
 }
