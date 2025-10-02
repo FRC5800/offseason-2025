@@ -39,6 +39,7 @@ public class AutoMove extends Command {
         SmartDashboard.putNumber("Drive pose X", 0);
         SmartDashboard.putNumber("Drive pose y", 0);
         SmartDashboard.putNumber("Drive pose angle", 0);
+        SmartDashboard.putNumber("distY", 0);
         addRequirements(xDrive);
     }
     
@@ -59,32 +60,72 @@ public class AutoMove extends Command {
         }
         
         // this.xDrive.field.setRobotPose(simulation);
+        double mult = left ? -1 : 1;
 
         this.target = this.xDrive
             .getPose2d()
-            .nearest(reef_tag_poses);
+            .nearest(reef_tag_poses)
+            .transformBy(new Transform2d(0, 0.17*mult, new Rotation2d()));
         
-        double cosT = target
-            .getRotation()
-            .getCos();
-        double senT = target
-            .getRotation()
-            .getSin();
+        // double cosT = target
+        //     .getRotation()
+        //     .getCos();
+        // double senT = target
+        //     .getRotation()
+        //     .getSin();
         
-        target = target
-            .transformBy(
-                new Transform2d(
-                    new Translation2d(0.17*-senT, 0.17*cosT),
-                    new Rotation2d()));
+       
+
+        // target = target
+        //     .transformBy(
+        //         new Transform2d(
+        //             new Translation2d(0.17*-senT*mult, 0.17*cosT*mult),
+        //             new Rotation2d()));
         
         // xDrive.movementController.setSetpoint(target.getTranslation().getNorm());
     }
     
     // Called every time the scheduler runs while the command is scheduled.
+    
+    double perpSigned;
+    double perpAbs;
+    double distY = 0;
+    
     @Override
     public void execute() {
-        xDrive.driveRelative(0.2, 0.4, 0);
         this.xDrive.field.getObject("traj").setPose(target);
+        
+        Rotation2d angleTag = target.getRotation(); 
+        Rotation2d angleRobot = new Rotation2d(Math.PI).plus(angleTag); 
+        
+        Pose2d robotPose = xDrive.getPose2d();
+        robotPose = new Pose2d(robotPose.getTranslation(), angleRobot);
+        Pose2d tagPose = target;
+        
+        // normaliza ângulos para comparação: se diferença angular for ~0 ou ~pi => são paralelas/opostas
+        double angleDiff = Math.abs(tagPose.getRotation().getRadians() - robotPose.getRotation().getRadians());
+        
+        // reduzir ao intervalo [0, pi]
+        angleDiff = Math.abs(Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff)));
+        
+        // vetor do tag até o robô no frame da tag: já nos dá componente lateral (Y) — a distância perpendicular
+        Pose2d robotRelToTag = robotPose.relativeTo(tagPose);
+        this.perpSigned = robotRelToTag.getTranslation().getY();
+        this.perpAbs = Math.abs(perpSigned);
+        
+        SmartDashboard.putNumber("PerpDistance_signed_m", perpSigned);
+        SmartDashboard.putNumber("PerpDistance_abs_m", perpAbs);
+        SmartDashboard.putNumber("AngleDiff_deg", Math.toDegrees(angleDiff));
+
+        var x = -perpSigned > 0 ? 0.4 : -0.4;
+        this.distY = xDrive.getPose2d().getTranslation().plus(new Translation2d(0, x)).getDistance(target.getTranslation())-0.5;
+        SmartDashboard.putNumber("distY", distY);
+        var y = 0.4;
+
+        if (closeEnoughX()) x = 0;
+        if (closeEnoughY()) y = 0; 
+
+        xDrive.driveRelative(0.2, x, 0);
     }
     
     // Called once the command ends or is interrupted.
@@ -92,51 +133,23 @@ public class AutoMove extends Command {
     public void end(boolean interrupted) {
         xDrive.drive(0, 0, 0);
     }
+
+    boolean closeEnoughX() {
+        return perpAbs < 0.07;
+    }
+
+    boolean closeEnoughY() {
+        return distY < 0.5;
+    }
     
     // Returns true when the command should end.
     @Override
-    public boolean isFinished() {
-        Rotation2d angleTag = target.getRotation(); 
-        Rotation2d angleRobot = new Rotation2d(Math.PI).plus(angleTag); 
-        
-        Pose2d robotPose = xDrive.getPose2d();
-        robotPose = new Pose2d(robotPose.getTranslation(), angleRobot);
-        Pose2d tagPose = target;
-    
-        // normaliza ângulos para comparação: se diferença angular for ~0 ou ~pi => são paralelas/opostas
-        double angleDiff = Math.abs(tagPose.getRotation().getRadians() - robotPose.getRotation().getRadians());
-        
-        // reduzir ao intervalo [0, pi]
-        angleDiff = Math.abs(Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff)));
-    
-        // threshold angular para considerar "paralelas" (em radianos). ex: 5 graus ~ 0.087 rad
-        double parallelAngleThreshold = Math.toRadians(5.0);
-    
-        // vetor do tag até o robô no frame da tag: já nos dá componente lateral (Y) — a distância perpendicular
-        Pose2d robotRelToTag = robotPose.relativeTo(tagPose);
-        double perpSigned = robotRelToTag.getTranslation().getY();
-        double perpAbs = Math.abs(perpSigned);
-    
-        SmartDashboard.putNumber("PerpDistance_signed_m", perpSigned);
-        SmartDashboard.putNumber("PerpDistance_abs_m", perpAbs);
-        SmartDashboard.putNumber("AngleDiff_deg", Math.toDegrees(angleDiff));
-    
-        // se NÃO são paralelas (ou seja, intersectam), a distância entre retas infinitas é zero
-        if (angleDiff > parallelAngleThreshold && Math.abs(angleDiff - Math.PI) > parallelAngleThreshold) {
-            SmartDashboard.putString("LineRelation", "intersecting (distance = 0)");
-            // você pode optar por terminar aqui se quiser que intersectem; aqui consideramos não finalizado
-            // return true; // opcional: se você quer terminar quando linhas se cruzam
-        } else {
-            SmartDashboard.putString("LineRelation", "parallel/opposed");
-        }
-    
-        // Threshold de distância em metros para considerar "chegou" (ajuste conforme necessário)
-        double finishThreshold = 0.07; // 3 cm
-        boolean closeEnough = perpAbs < finishThreshold;
+    public boolean isFinished() {    
+        boolean closeEnough = closeEnoughX() && closeEnoughY();
     
         SmartDashboard.putBoolean("PerpCloseEnough", closeEnough);
     
-        return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 2;
+        return closeEnough || target.getTranslation().getDistance(initialPose.getTranslation()) > 3;
 
     }
 }

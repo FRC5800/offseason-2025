@@ -22,12 +22,14 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -85,6 +87,7 @@ public class XDrive extends SubsystemBase {
     // Variables to define the velocity of the robot
     double maxSpeed = 0.9;
     boolean turbo = true;
+    double gyroSim = 0;
 
     // Constructor
     public XDrive() {
@@ -127,6 +130,7 @@ public class XDrive extends SubsystemBase {
 
         // Configuring PIDControllers
         rotationController.setTolerance(1);
+        rotationController.enableContinuousInput(0, 360);
         movementController.setTolerance(1);
     }
 
@@ -155,7 +159,11 @@ public class XDrive extends SubsystemBase {
 
     // Method to rotate in its own axis with pid
     public void autoRotate(){
-        drive(0, 0, MathUtil.clamp(rotationController.calculate(gyro.getAngle()), -0.7, 0.7));
+        if (RobotBase.isSimulation()) {
+            drive(0, 0, MathUtil.clamp(rotationController.calculate(gyroSim), -0.5, 0.5));
+            return;
+        }
+        drive(0, 0, MathUtil.clamp(rotationController.calculate(gyro.getAngle()), -0.5, 0.5));
     }
 
     public void switchSpeed(){
@@ -170,20 +178,24 @@ public class XDrive extends SubsystemBase {
 
     public Pose2d getPose2d(){
         return poseEstimator.getEstimatedPosition();
-        // return field.getRobotPose();
     }
 
     public void resetController(){
         controller = new HolonomicDriveController(xController, yController, rController);
     }
 
-    public void drive(double y, double x, double r) {
-        SmartDashboard.putNumber("drive Y", y);
-        SmartDashboard.putNumber("drive X", x);
-        SmartDashboard.putNumber("drive R", r);
-        
+    public void drive(double y, double x, double r) {       
         if(!isActive)
             return;
+
+        if (RobotBase.isSimulation()) {
+            
+            poseEstimator.resetPose(new Pose2d(getPose2d().getTranslation().plus(new Translation2d(y*0.1, -x*0.1)), getPose2d().getRotation().rotateBy(new Rotation2d(r*0.05))));
+            
+            gyroSim += Math.toDegrees(r*0.05);
+            return;
+        }
+
         double botHeading = -Math.toRadians(gyro.getAngle() + 180);
         
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -197,12 +209,6 @@ public class XDrive extends SubsystemBase {
         BL = lerp(BL, ((rotY - rotX + omega) / denominator) * maxSpeed, 0.1);
         BR = lerp(BR, ((rotY + rotX - omega) / denominator) * maxSpeed, 0.1);
 
-        // double denominator = Math.max(Math.abs(x) + Math.abs(y) + Math.abs(r), 1);
-        // FL = lerp(FL, ((y + x + omega) / denominator) * 0.7, 0.1);
-        // FR = lerp(FR, ((y - x - omega) / denominator) * 0.7, 0.1);
-        // BL = lerp(BL, ((y - x + omega) / denominator) * 0.7, 0.1);
-        // BR = lerp(BR, ((y + x - omega) / denominator) * 0.7, 0.1);
-
         // Aplicando aos motores
         lf.set(FL);
         rf.set(FR);
@@ -211,6 +217,12 @@ public class XDrive extends SubsystemBase {
     }
 
     public void driveRelative(double y, double x, double r) {
+        if (RobotBase.isSimulation()) {
+            poseEstimator.resetPose(getPose2d().transformBy(new Transform2d(y*0.1, -x*0.1, new Rotation2d(r*0.05))));
+            gyroSim += Math.toDegrees(r*0.05);
+            return;
+        }
+
         double rotX = x;
         double rotY = y;
         double omega = r;
