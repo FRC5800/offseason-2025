@@ -39,9 +39,9 @@ public class ElevatorPID extends Command {
     else if(controller.getPOV() == 180)
       elevador.setTarget(0);
     else if(controller.getPOV() == 270)
-      elevador.setTarget(100);
+      elevador.setTarget(55);
     else if(controller.getPOV() == 90)
-      elevador.setTarget(50);
+      elevador.setTarget(100);
   }
 
   // Called once the command ends or is interrupted.
@@ -55,3 +55,4 @@ public class ElevatorPID extends Command {
     return false;
   }
 }
+ 
