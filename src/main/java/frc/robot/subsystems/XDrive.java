@@ -98,25 +98,25 @@ public class XDrive extends SubsystemBase {
         //Configuring controllers
         var lfconfig = new SparkMaxConfig();
         lfconfig.idleMode(IdleMode.kBrake);
-        lfconfig.smartCurrentLimit(80);
+        lfconfig.smartCurrentLimit(60);
         lfconfig.disableFollowerMode();
         lf.configure(lfconfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         var rfconfig = new SparkMaxConfig();
         rfconfig.idleMode(IdleMode.kBrake);
-        rfconfig.smartCurrentLimit(80);
+        rfconfig.smartCurrentLimit(60);
         rfconfig.disableFollowerMode();
         rf.configure(rfconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
         var rbconfig = new SparkMaxConfig();
         rbconfig.idleMode(IdleMode.kBrake);
-        rbconfig.smartCurrentLimit(80);
+        rbconfig.smartCurrentLimit(60);
         rbconfig.disableFollowerMode();
         rb.configure(rbconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
         var lbconfig = new SparkMaxConfig();
         lbconfig.idleMode(IdleMode.kBrake);
-        lbconfig.smartCurrentLimit(80);
+        lbconfig.smartCurrentLimit(60);
         lbconfig.disableFollowerMode();
         lb.configure(lbconfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 

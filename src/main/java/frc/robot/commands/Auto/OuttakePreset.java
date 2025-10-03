@@ -22,8 +22,8 @@ public class OuttakePreset extends SequentialCommandGroup {
   public OuttakePreset( Outtake outtake ) {
     
     addCommands( 
-      new outtake_time(outtake, 0.3, 0.6),
-      new outtake_time(outtake, 0.10, -0.6)
+      new outtake_time(outtake, 0.3, 0.5),
+      new outtake_time(outtake, 0.1, -0.5)
     );
 
   }

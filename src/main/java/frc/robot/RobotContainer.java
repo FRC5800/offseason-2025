@@ -73,6 +73,10 @@ public class RobotContainer {
         xDrive.driveRelative(0, -0.4, 0);
       else if(controller.getPOV() == 90)
         xDrive.driveRelative(0, 0.4, 0);
+      else if(controller.getPOV() == 0)
+        xDrive.driveRelative(0.9, 0, 0);
+      else if(controller.getPOV() == 180)
+        xDrive.driveRelative(-0.9, 0, 0);
     }, xDrive));
 
     // new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
