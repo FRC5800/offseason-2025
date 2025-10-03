@@ -14,11 +14,12 @@ public class outtake_time extends Command {
     public Timer timer = new Timer();
   public Outtake outtaketime;
   public double time;
-
+  public double speed;
   
-  public outtake_time(Outtake outtaketimer,double time) {
+  public outtake_time(Outtake outtaketimer,double time, double speed) {
     this.outtaketime = outtaketimer;
     this.time = time;
+    this.speed = speed;
     addRequirements(outtaketimer);
   }
 
@@ -32,7 +33,7 @@ public class outtake_time extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    outtaketime.run(-0.6);
+    outtaketime.run(-speed);
 
 
 

@@ -17,20 +17,13 @@ import frc.robot.subsystems.XDrive;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class Autonomous_time extends SequentialCommandGroup {
+public class OuttakePreset extends SequentialCommandGroup {
   
-  public Autonomous_time(XDrive xdrive, Outtake outtake, Elevador elevador) {
+  public OuttakePreset( Outtake outtake ) {
     
     addCommands( 
-      new Drivetimer(xdrive, 
-      2.8),
-      new WaitCommand(0.5),
-      // new AutoMove(xdrive, true).withTimeout(6),
-      new InstantCommand(() -> elevador.setTarget(160),elevador),
-      //new InstantCommand(() -> elevador.setTarget(160),elevador),
-      new WaitCommand(2),
-      new outtake_time(outtake, 1, 0.8),
-      new InstantCommand(() -> elevador.setTarget(75),elevador)
+      new outtake_time(outtake, 0.3, 0.6),
+      new outtake_time(outtake, 0.10, -0.6)
     );
 
   }

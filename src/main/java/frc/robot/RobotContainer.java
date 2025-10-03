@@ -38,6 +38,7 @@ import frc.robot.commands.Auto.AutoMove;
 import frc.robot.commands.Auto.AutoRotate;
 import frc.robot.commands.Auto.Autonomous_time;
 import frc.robot.commands.Auto.Drivetimer;
+import frc.robot.commands.Auto.OuttakePreset;
 import frc.robot.subsystems.PivotFunil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -99,6 +100,9 @@ public class RobotContainer {
     // new JoystickButton(controller02, 2).whileTrue(new ClimberComm(climber, -0.5));
     
     new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));;
+
+    new JoystickButton(controller02, 2).onTrue(new OuttakePreset(outtake));;
+
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
     new JoystickButton(controller02, 1).onTrue(new RunCommand(() -> outtake.switch_speed(), outtake));
     // new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));
