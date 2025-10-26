@@ -28,11 +28,10 @@ public class AutoRotate extends Command {
     ArrayList<Pose2d> reef_tag_poses = new ArrayList<Pose2d>();
 
     /** Creates a new AutoRotate. */
-    public AutoRotate(XDrive xDrive
-    ) {
+    public AutoRotate(XDrive xDrive) {
         // Use addRequirements() here to declare subsystem dependencies.
         this.xDrive = xDrive;
-        
+
         addRequirements(xDrive);
     }
 

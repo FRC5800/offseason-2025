@@ -66,7 +66,7 @@ public class RobotContainer {
       double Yaxis = Math.abs(controller.getLeftY()) > 0.15 ? -controller.getLeftY() : 0;
       double Xaxis = Math.abs(controller.getLeftX()) > 0.15 ? controller.getLeftX() : 0;
       double Zaxis = Math.abs(controller.getRightX()) > 0.15 ? controller.getRightX() : 0;
-      
+
       xDrive.drive(Yaxis, Xaxis, Zaxis);
 
       if(controller.getPOV() == 270)
@@ -80,7 +80,7 @@ public class RobotContainer {
     }, xDrive));
 
     // new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
-    
+
     // new JoystickButton(controller, 3).onTrue(new AutoRotate(xDrive));
     new JoystickButton(controller, 4).whileTrue(new AutoMove(xDrive, true));
 
@@ -89,34 +89,24 @@ public class RobotContainer {
       new AutoMove(xDrive, true))
     );
     new JoystickButton(controller, 2).whileTrue(new SequentialCommandGroup(
-      new AutoRotate(xDrive), 
+      new AutoRotate(xDrive),
       new AutoMove(xDrive, false))
     );
-    
+
     height = SmartDashboard.getNumber("Altura do Elevador", 150);
 
-    // elevador.setDefaultCommand(new Elevadancia(elevador, controller02));
     elevador.setDefaultCommand(new ElevatorPID(elevador, controller02, 0));
 
-    // new JoystickButt%on(controller02, 3).whileTrue(new MexerFunil(pivotFunil,1));
-    // new JoystickButton(controller02, 4).whileTrue(new MexerFunil(pivotFunil, -1));
-    // new JoystickButton(controller02, 1).whileTrue(new ClimberComm(climber, 0.5));
-    // new JoystickButton(controller02, 2).whileTrue(new ClimberComm(climber, -0.5));
-    
-    new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));;
+    new JoystickButton(controller02, 3).whileTrue(new MoveOuttake(outtake, 0.5));
 
-    new JoystickButton(controller02, 2).onTrue(new OuttakePreset(outtake));;
+    new JoystickButton(controller02, 2).onTrue(new OuttakePreset(outtake));
 
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
     new JoystickButton(controller02, 1).onTrue(new RunCommand(() -> outtake.switch_speed(), outtake));
-    // new JoystickButton(controller02, 5).onTrue(new ElevatorPID(elevador,  2));
-    // new JoystickButton(controller02, 6).onTrue(new ElevatorPID(elevador, 155));
-    // new JoystickButton(controller, 1).whileTrue(new AutoRotate(xDrive, true));
-    // new JoystickButton(controller, 3).onTrue(new MoveToTrajectory(xDrive, 1));    
-    // new JoystickButton(controller, 4).onTrue(new MoveToTrajectory(xDrive, 6));    
+    
   }
 
-  
+
   public Command getAutonomousCommand() {
     //return new Drivetimer(xDrive, 2);
     // An example command will be run in autonomous
