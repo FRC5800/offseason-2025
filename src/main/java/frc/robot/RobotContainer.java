@@ -4,11 +4,26 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.XDrive;
+import edu.wpi.first.wpilibj.Joystick;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Elevadancia;
+import frc.robot.commands.Elevadancia;
+import frc.robot.subsystems.Elevador;
 import frc.robot.commands.Elevadancia;
 import frc.robot.commands.ElevatorPID;
 import frc.robot.subsystems.Elevador;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ClimberComm;
+import frc.robot.subsystems.Climber;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -19,19 +34,21 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  Joystick controle = new Joystick(0);
-  Elevador elevador = new Elevador();
-  PS4Controller controleBotoes = new PS4Controller(1);
+  private XDrive xDrive = new XDrive();
+  private Joystick controller = new Joystick(0);
+  private Climber climber = new Climber();
+  private Elevador elevador = new Elevador();
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
   }
 
   private void configureBindings() {
-    // elevador.setDefaultCommand(new ElevatorPID(elevador, controleBotoes));
-    elevador.setDefaultCommand(new Elevadancia(elevador, controle, controleBotoes));
+    xDrive.setDefaultCommand(new RunCommand(() -> xDrive.drive(-controller.getY(), controller.getX(), controller.getZ()), xDrive));
+    climber.setDefaultCommand(new ClimberComm(climber, controller));
+    elevador.setDefaultCommand(new Elevadancia(elevador, controller));
   }
 
   public Command getAutonomousCommand() {
