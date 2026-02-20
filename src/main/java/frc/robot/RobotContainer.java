@@ -6,43 +6,19 @@ package frc.robot;
 
 import frc.robot.subsystems.XDrive;
 import edu.wpi.first.wpilibj.Joystick;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Elevadancia;
-import frc.robot.commands.Elevadancia;
 import frc.robot.subsystems.Elevador;
 import frc.robot.subsystems.Outtake;
-import frc.robot.commands.Elevadancia;
 import frc.robot.commands.ElevatorPID;
-import frc.robot.subsystems.Elevador;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS4Controller;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.OperatorConstants;
-// import frc.robot.commands.ClimberComm;
-// import frc.robot.subsystems.Climber;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.MexerFunil;
 import frc.robot.commands.MoveOuttake;
 import frc.robot.commands.Auto.AutoMove;
 import frc.robot.commands.Auto.AutoRotate;
 import frc.robot.commands.Auto.Autonomous_time;
-import frc.robot.commands.Auto.Drivetimer;
 import frc.robot.commands.Auto.OuttakePreset;
-import frc.robot.subsystems.PivotFunil;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
@@ -50,9 +26,7 @@ public class RobotContainer {
   private XDrive xDrive = new XDrive();
   private XboxController controller = new XboxController(0);
   private Joystick controller02 = new Joystick(1);
-  // private Climber climber = new Climber();
   private Elevador elevador = new Elevador();
-  private PivotFunil pivotFunil = new PivotFunil();
   private Outtake outtake = new Outtake();
   private double height = 150;
 
@@ -79,11 +53,7 @@ public class RobotContainer {
         xDrive.driveRelative(-0.9, 0, 0);
     }, xDrive));
 
-    // new JoystickButton(controller, 4).onTrue(new InstantCommand(() -> xDrive.switchSpeed()));
-
-    // new JoystickButton(controller, 3).onTrue(new AutoRotate(xDrive));
     new JoystickButton(controller, 4).whileTrue(new AutoMove(xDrive, true));
-
     new JoystickButton(controller, 3).whileTrue(new SequentialCommandGroup(
       new AutoRotate(xDrive),
       new AutoMove(xDrive, true))
@@ -103,13 +73,10 @@ public class RobotContainer {
 
     new JoystickButton(controller02, 4).whileTrue(new MoveOuttake(outtake, -0.5));
     new JoystickButton(controller02, 1).onTrue(new RunCommand(() -> outtake.switch_speed(), outtake));
-    
   }
 
 
   public Command getAutonomousCommand() {
-    //return new Drivetimer(xDrive, 2);
-    // An example command will be run in autonomous
     return new Autonomous_time(xDrive, outtake, elevador);
   }
 }
